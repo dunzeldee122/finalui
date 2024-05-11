@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'login.dart'; // Import the login page
 import 'petreg.dart'; // Import the pet registration page
+import 'profile.dart'; // Import the profile page
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,9 +13,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   File? _selectedImage;
+  final String _defaultAvatar = 'assets/ava.jpg'; // Default account icon
 
   Future<void> _getImageFromGallery() async {
-    final pickedFile = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
+    final pickedFile =
+    await ImagePicker.platform.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -47,7 +50,10 @@ class _HomePageState extends State<HomePage> {
               child: Text('Yes'),
               onPressed: () {
                 // Navigate back to the login screen
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => LoginPage()));
               },
             ),
           ],
@@ -59,56 +65,125 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: Column(
-          children: [
-            // Profile icon or selected image
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(20.0),
-              color: Colors.blue,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.white,
-                child: _selectedImage != null
-                    ? Image.file(_selectedImage!, fit: BoxFit.cover) // Use selected image if available
-                    : Icon(
-                  Icons.account_circle,
-                  size: 80,
-                  color: Colors.blue,
-                ), // Default icon if no image selected
-              ),
-            ),
-            // Option to change profile picture
-            ListTile(
-              title: Text('Change Profile Picture'),
-              onTap: _getImageFromGallery,
-            ),
-            // Button to list your pet
-            ListTile(
-              title: Text('List Your Pet'),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => PetRegistrationPage()));
+      appBar: AppBar(
+        title: Text('Home Page'),
+        // Add the hamburger icon to open the drawer
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
               },
+            );
+          },
+        ),
+      ),
+      drawer: Drawer(
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/pawbg.jpg'),
+              fit: BoxFit.cover,
             ),
-            // Logout button
-            Expanded( // Use Expanded to push the logout button to the bottom
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: ListTile(
-                  title: Text('Logout'),
-                  onTap: () {
-                    _showLogoutConfirmationDialog(context);
-                  },
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Profile icon or selected image
+              Container(
+                padding: EdgeInsets.all(20.0),
+                color: Color(0xFFa67b5b), // Hexadecimal color code
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Profile picture
+                    CircleAvatar(
+                      radius: 50.0,
+                      backgroundImage: _selectedImage != null
+                          ? FileImage(_selectedImage!)
+                          : AssetImage(_defaultAvatar) as ImageProvider<Object>?,
+                    ),
+                    // Change picture icon
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: _getImageFromGallery,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              ListTile(
+                title: Text(
+                  'Name: John Doe',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Phone: +1234567890',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Email: john.doe@example.com',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Address: 123 Main Street',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ),
+              Spacer(), // Add Spacer to push the buttons to the bottom
+              // Profile button
+              ListTile(
+                title: Text(
+                  'Profile',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                leading: Icon(Icons.person),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()),
+                  );
+                },
+              ),
+              // Power off button
+              ListTile(
+                title: Text(
+                  'Logout',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                leading: Icon(Icons.power_settings_new),
+                onTap: () {
+                  _showLogoutConfirmationDialog(context);
+                },
+              ),
+            ],
+          ),
         ),
       ),
       body: Center(
         child: Text('Home Page'),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PetRegistrationPage()),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color(0xFFa67b5b), // Hexadecimal color code
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }
