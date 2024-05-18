@@ -39,7 +39,7 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                 Navigator.of(context).pop(); // Close the dialog
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()), // Navigate to home.dart
+                  MaterialPageRoute(builder: (context) => HomePage(userData: {},)), // Navigate to home.dart
                 );
               },
               child: const Text('Close'),

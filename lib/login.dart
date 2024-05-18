@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'register.dart';
+import 'dbconnection.dart';
 import 'home.dart';
+import 'register.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController un = TextEditingController();
@@ -14,7 +17,7 @@ class LoginPage extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: const DecorationImage(
-            image: AssetImage('assets/loginbg.jpg'), // Adjust the path to your image asset
+            image: AssetImage('assets/loginbg.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -24,14 +27,12 @@ class LoginPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Your logo
                 Image.asset(
                   'assets/logo.png',
-                  width: 100, // Adjust width as needed
-                  height: 100, // Adjust height as needed
+                  width: 100,
+                  height: 100,
                 ),
                 const SizedBox(height: 20.0),
-                // Text field for username
                 TextField(
                   controller: un,
                   decoration: InputDecoration(
@@ -46,7 +47,6 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20.0),
-                // Text field for password
                 TextField(
                   controller: pw,
                   decoration: InputDecoration(
@@ -62,25 +62,25 @@ class LoginPage extends StatelessWidget {
                   obscureText: true,
                 ),
                 const SizedBox(height: 20.0),
-                // Log in button
                 ElevatedButton(
-                  onPressed: () {
-                    // Get the text entered in the username and password fields
+                  onPressed: () async {
+                    await initializeDatabase();
                     String username = un.text.trim();
                     String password = pw.text.trim();
 
-                    // Check if the username and password are not empty
                     if (username.isNotEmpty && password.isNotEmpty) {
-                      if (username == 'admin' && password == 'admin') {
-                        // Redirect to AdminPage if username and password are 'admin'
-                        Navigator.pushReplacementNamed(context, '/admin');
+                      Map<String, dynamic> userData = await loginUser(username, password);
+                      if (userData.isNotEmpty) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage(userData: userData)),
+                        );
                       } else {
-                        // Redirect to HomePage for any other username and password
-                        Navigator.pushReplacementNamed(context, '/home');
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Invalid username or password.'),
+                        ));
                       }
                     } else {
-                      // Show an error message or handle the case where username or password is empty
-                      // For example:
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text('Please enter username and password.'),
                       ));
@@ -89,7 +89,6 @@ class LoginPage extends StatelessWidget {
                   child: const Text('Log In'),
                 ),
                 const SizedBox(height: 20.0),
-                // "Don't have an account? Sign up" text
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -120,7 +119,36 @@ class LoginPage extends StatelessWidget {
           ),
         ),
       ),
-      backgroundColor: Colors.transparent, // Set background color to transparent
+      backgroundColor: Colors.transparent,
     );
+  }
+
+  Future<Map<String, dynamic>> loginUser(String username, String password) async {
+    try {
+      final conn = getDatabaseConnection();
+
+      // Retrieve user data from the database based on the provided username and password
+      final results = await conn.query(
+        'SELECT uid, fname, lname, phone, email, address FROM user WHERE username = ? AND password = ?',
+        [username, md5.convert(utf8.encode(password)).toString()],
+      );
+
+      if (results.isNotEmpty) {
+        final userData = results.first.fields;
+        return {
+          'uid': userData['uid'],
+          'fname': userData['fname'],
+          'lname': userData['lname'],
+          'phone': userData['phone'],
+          'email': userData['email'],
+          'address': userData['address'],
+        };
+      }
+
+      return {}; // Return an empty map if no user found
+    } catch (e) {
+      print('Error during login: $e');
+      return {};
+    }
   }
 }
