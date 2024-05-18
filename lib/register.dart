@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
-import 'login.dart'; // Import your login page file
-import 'dbconnection.dart'; // Import dbconnection.dart to access the database functions
+import 'package:flutter_bcrypt/flutter_bcrypt.dart';
+import 'dbconnection.dart';
+import 'login.dart';
 
 class RegisterPage extends StatelessWidget {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final transparentColor = const Color.fromRGBO(166, 123, 91, 0.5);
-    TextEditingController usernameController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-    TextEditingController firstNameController = TextEditingController();
-    TextEditingController lastNameController = TextEditingController();
-    TextEditingController phoneNumberController = TextEditingController();
-    TextEditingController emailController = TextEditingController();
-    TextEditingController addressController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register'),
-        backgroundColor: Colors.transparent, // Make AppBar transparent
-        elevation: 0, // Remove AppBar shadow
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      extendBodyBehindAppBar: true, // Extend body behind AppBar
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           Container(
             decoration: const BoxDecoration(
-              image: const DecorationImage(
-                image: AssetImage("assets/uregbg.jpg"), // Background image path
+              image: DecorationImage(
+                image: AssetImage("assets/uregbg.jpg"),
                 fit: BoxFit.cover,
               ),
             ),
@@ -141,8 +143,6 @@ class RegisterPage extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
-                          // Handle registration logic
-                          // Extract data from text controllers
                           String username = usernameController.text;
                           String password = passwordController.text;
                           String firstName = firstNameController.text;
@@ -151,13 +151,11 @@ class RegisterPage extends StatelessWidget {
                           String email = emailController.text;
                           String address = addressController.text;
 
-                          // Initialize database connection
-                          await initializeDatabase();
+                          // Hash the password before storing it
+                          String hashedPassword = await FlutterBcrypt.hashPw(password: password, salt: await FlutterBcrypt.salt());
 
-                          // Call the function to register user
-                          await registerUser(username, password, firstName, lastName, phoneNumber, email, address);
+                          await registerUser(username, hashedPassword, firstName, lastName, phoneNumber, email, address);
 
-                          // Show success message
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -167,10 +165,10 @@ class RegisterPage extends StatelessWidget {
                                 actions: <Widget>[
                                   ElevatedButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(); // Close the popup
+                                      Navigator.of(context).pop();
                                       Navigator.pushReplacement(
                                         context,
-                                        MaterialPageRoute(builder: (context) => LoginPage()), // Redirect to login page
+                                        MaterialPageRoute(builder: (context) => LoginPage()),
                                       );
                                     },
                                     child: const Text('Close'),

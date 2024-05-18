@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register.dart';
 import 'home.dart';
-import 'dbconnection.dart'; // Import dbconnection.dart to access the loginUser function
+import 'dbconnection.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController un = TextEditingController();
@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: const DecorationImage(
-            image: AssetImage('assets/loginbg.jpg'), // Adjust the path to your image asset
+            image: AssetImage('assets/loginbg.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -25,14 +25,12 @@ class LoginPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Your logo
                 Image.asset(
                   'assets/logo.png',
-                  width: 100, // Adjust width as needed
-                  height: 100, // Adjust height as needed
+                  width: 100,
+                  height: 100,
                 ),
                 const SizedBox(height: 20.0),
-                // Text field for username
                 TextField(
                   controller: un,
                   decoration: InputDecoration(
@@ -47,7 +45,6 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20.0),
-                // Text field for password
                 TextField(
                   controller: pw,
                   decoration: InputDecoration(
@@ -63,28 +60,25 @@ class LoginPage extends StatelessWidget {
                   obscureText: true,
                 ),
                 const SizedBox(height: 20.0),
-                // Log in button
                 ElevatedButton(
                   onPressed: () async {
-                    // Get the text entered in the username and password fields
+                    await initializeDatabase();
                     String username = un.text.trim();
                     String password = pw.text.trim();
 
-                    // Check if the username and password are not empty
                     if (username.isNotEmpty && password.isNotEmpty) {
-                      // Call the loginUser function from dbconnection.dart
                       bool isLoggedIn = await loginUser(username, password);
                       if (isLoggedIn) {
-                        // Redirect to HomePage if login is successful
-                        Navigator.pushReplacementNamed(context, '/home');
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
                       } else {
-                        // Show an error message if login fails
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text('Invalid username or password.'),
                         ));
                       }
                     } else {
-                      // Show an error message if username or password is empty
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text('Please enter username and password.'),
                       ));
@@ -93,7 +87,6 @@ class LoginPage extends StatelessWidget {
                   child: const Text('Log In'),
                 ),
                 const SizedBox(height: 20.0),
-                // "Don't have an account? Sign up" text
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -124,7 +117,7 @@ class LoginPage extends StatelessWidget {
           ),
         ),
       ),
-      backgroundColor: Colors.transparent, // Set background color to transparent
+      backgroundColor: Colors.transparent,
     );
   }
 }
