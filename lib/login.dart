@@ -69,11 +69,11 @@ class LoginPage extends StatelessWidget {
                     String password = pw.text.trim();
 
                     if (username.isNotEmpty && password.isNotEmpty) {
-                      bool isLoggedIn = await loginUser(username, password);
-                      if (isLoggedIn) {
+                      Map<String, dynamic> userData = await loginUser(username, password);
+                      if (userData.isNotEmpty) {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => HomePage(userData: userData)),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -123,31 +123,32 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Future<bool> loginUser(String username, String password) async {
+  Future<Map<String, dynamic>> loginUser(String username, String password) async {
     try {
       final conn = getDatabaseConnection();
 
-      // Retrieve hashed password from the database based on the provided username
-      final results = await conn.query('SELECT password FROM user WHERE username = ?', [username]);
+      // Retrieve user data from the database based on the provided username and password
+      final results = await conn.query(
+        'SELECT uid, fname, lname, phone, email, address FROM user WHERE username = ? AND password = ?',
+        [username, md5.convert(utf8.encode(password)).toString()],
+      );
 
       if (results.isNotEmpty) {
-        final storedHashedPassword = results.first['password'];
-
-        // Hash the password entered by the user before comparing
-        String hashedPassword = md5.convert(utf8.encode(password)).toString();
-
-        // Compare the hashed password entered by the user with the hashed password retrieved from the database
-        if (hashedPassword == storedHashedPassword) {
-          print('Login successful for user: $username');
-          return true;
-        }
+        final userData = results.first.fields;
+        return {
+          'uid': userData['uid'],
+          'fname': userData['fname'],
+          'lname': userData['lname'],
+          'phone': userData['phone'],
+          'email': userData['email'],
+          'address': userData['address'],
+        };
       }
 
-      print('Login failed for user: $username');
-      return false;
+      return {}; // Return an empty map if no user found
     } catch (e) {
       print('Error during login: $e');
-      return false;
+      return {};
     }
   }
 }

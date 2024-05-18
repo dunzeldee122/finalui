@@ -5,8 +5,13 @@ import 'package:image_picker/image_picker.dart';
 import 'login.dart'; // Import the login page
 import 'petreg.dart'; // Import the pet registration page
 import 'profile.dart'; // Import the profile page
+import 'dbconnection.dart'; // Import the database connection
 
 class HomePage extends StatefulWidget {
+  final Map<String, dynamic> userData;
+
+  const HomePage({Key? key, required this.userData}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -51,9 +56,9 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 // Navigate back to the login screen
                 Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => LoginPage()));
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
               },
             ),
           ],
@@ -67,7 +72,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
-        // Add the hamburger icon to open the drawer
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -90,21 +94,18 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Profile icon or selected image
               Container(
                 padding: const EdgeInsets.all(20.0),
                 color: const Color(0xFFa67b5b), // Hexadecimal color code
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Profile picture
                     CircleAvatar(
                       radius: 50.0,
                       backgroundImage: _selectedImage != null
                           ? FileImage(_selectedImage!)
                           : AssetImage(_defaultAvatar) as ImageProvider<Object>?,
                     ),
-                    // Change picture icon
                     Positioned(
                       bottom: 0,
                       right: 0,
@@ -116,32 +117,31 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              const ListTile(
+              ListTile(
                 title: Text(
-                  'Name: John Doe',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  'Name: ${widget.userData['fname']} ${widget.userData['lname']}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
-              const ListTile(
+              ListTile(
                 title: Text(
-                  'Phone: +1234567890',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  'Phone: ${widget.userData['phone']}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
-              const ListTile(
+              ListTile(
                 title: Text(
-                  'Email: john.doe@example.com',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  'Email: ${widget.userData['email']}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
-              const ListTile(
+              ListTile(
                 title: Text(
-                  'Address: 123 Main Street',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  'Address: ${widget.userData['address']}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
-              const Spacer(), // Add Spacer to push the buttons to the bottom
-              // Profile button
+              const Spacer(),
               ListTile(
                 title: const Text(
                   'Profile',
@@ -155,7 +155,6 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
-              // Power off button
               ListTile(
                 title: const Text(
                   'Logout',

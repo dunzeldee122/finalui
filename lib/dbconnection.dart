@@ -24,3 +24,27 @@ MySqlConnection getDatabaseConnection() {
   return _connection;
 }
 
+Future<Map<String, dynamic>> getUserData(int uid) async {
+  final conn = getDatabaseConnection();
+
+  try {
+    final results = await conn.query(
+        'SELECT fname, lname, phone, email, address FROM user WHERE uid = ?',
+        [uid]);
+
+    if (results.isNotEmpty) {
+      final userData = results.first.fields;
+      return {
+        'fname': userData['fname'] ?? '',
+        'lname': userData['lname'] ?? '',
+        'phone': userData['phone'] ?? '',
+        'email': userData['email'] ?? '',
+        'address': userData['address'] ?? '',
+      };
+    }
+    return {}; // Return an empty map if no user found
+  } catch (e) {
+    print('Error fetching user data: $e');
+    rethrow;
+  }
+}

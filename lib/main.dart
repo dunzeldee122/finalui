@@ -19,13 +19,15 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  get userData => null;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: '/',
       routes: {
         '/': (context) => LoginPage(),
-        '/home': (context) => HomePage(),
+        '/home': (context) => HomePage(userData: userData),
         '/register': (context) => RegisterPage(),
         '/profile': (context) => ProfilePage(),
         '/petregistration': (context) => PetRegistrationPage(),
