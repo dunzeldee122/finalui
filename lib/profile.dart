@@ -3,25 +3,25 @@ import 'package:flutter/material.dart';
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final transparentColor = Color.fromRGBO(166, 123, 91, 0.5);
+    final transparentColor = const Color.fromRGBO(166, 123, 91, 0.5);
 
     return Scaffold(
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/profilebg.jpg'),
-                fit: BoxFit.cover,
+            decoration: const BoxDecoration(
+              image: const DecorationImage(
+                image: AssetImage('assets/profilebg2.jpg'),
+                fit: BoxFit.fill,
               ),
             ),
           ),
           Column(
             children: [
               SizedBox(height: MediaQuery.of(context).padding.top), // To handle safe area
-              SizedBox(height: kToolbarHeight), // To reserve space for the back button
+              const SizedBox(height: kToolbarHeight), // To reserve space for the back button
               Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Name',
@@ -31,12 +31,12 @@ class ProfilePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Phone',
@@ -46,12 +46,12 @@ class ProfilePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Email Address',
@@ -61,12 +61,12 @@ class ProfilePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Address',
@@ -76,7 +76,7 @@ class ProfilePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                   ),
                 ),
               ),
@@ -87,16 +87,32 @@ class ProfilePage extends StatelessWidget {
             right: 16.0,
             child: GestureDetector(
               onTap: () {
-                // Add functionality for the pencil button here
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Profile updated"),
+                      content: const Text("Your profile has been successfully updated."),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: Center(
+                child: const Center(
                   child: Icon(
                     Icons.edit,
                     color: Colors.black,
@@ -115,11 +131,11 @@ class ProfilePage extends StatelessWidget {
               child: Container(
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: Center(
+                child: const Center(
                   child: Icon(
                     Icons.arrow_back,
                     color: Colors.black,

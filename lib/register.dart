@@ -4,11 +4,11 @@ import 'login.dart'; // Import your login page file
 class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final transparentColor = Color.fromRGBO(166, 123, 91, 0.5);
+    final transparentColor = const Color.fromRGBO(166, 123, 91, 0.5);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register'),
+        title: const Text('Register'),
         backgroundColor: Colors.transparent, // Make AppBar transparent
         elevation: 0, // Remove AppBar shadow
       ),
@@ -16,8 +16,8 @@ class RegisterPage extends StatelessWidget {
       body: Stack( // Use Stack to overlay the background image
         children: [
           Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
+            decoration: const BoxDecoration(
+              image: const DecorationImage(
                 image: AssetImage("assets/uregbg.jpg"), // Background image path
                 fit: BoxFit.cover,
               ),
@@ -39,10 +39,10 @@ class RegisterPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     TextField(
                       decoration: InputDecoration(
                         labelText: 'Password',
@@ -52,11 +52,11 @@ class RegisterPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       ),
                       obscureText: true,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     TextField(
                       decoration: InputDecoration(
                         labelText: 'First Name',
@@ -66,10 +66,10 @@ class RegisterPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     TextField(
                       decoration: InputDecoration(
                         labelText: 'Last Name',
@@ -79,10 +79,10 @@ class RegisterPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     TextField(
                       decoration: InputDecoration(
                         labelText: 'Phone Number',
@@ -92,11 +92,11 @@ class RegisterPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       ),
                       keyboardType: TextInputType.phone,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     TextField(
                       decoration: InputDecoration(
                         labelText: 'Email',
@@ -106,11 +106,11 @@ class RegisterPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     TextField(
                       decoration: InputDecoration(
                         labelText: 'Address',
@@ -120,11 +120,11 @@ class RegisterPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       ),
                       maxLines: null, // Allow multiple lines for address
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Container(
                       width: double.infinity, // Make button full width
                       child: ElevatedButton(
@@ -135,8 +135,8 @@ class RegisterPage extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Success'),
-                                content: Text('Account has been created.'),
+                                title: const Text('Success'),
+                                content: const Text('Account has been created.'),
                                 actions: <Widget>[
                                   ElevatedButton(
                                     onPressed: () {
@@ -146,7 +146,7 @@ class RegisterPage extends StatelessWidget {
                                         MaterialPageRoute(builder: (context) => LoginPage()), // Redirect to login page
                                       );
                                     },
-                                    child: Text('Close'),
+                                    child: const Text('Close'),
                                   ),
                                 ],
                               );
@@ -156,8 +156,8 @@ class RegisterPage extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.brown, // Change button color to brown
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0), // Add vertical padding
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.0), // Add vertical padding
                           child: Text(
                             'Register',
                             style: TextStyle(color: Colors.white), // Change text color to white

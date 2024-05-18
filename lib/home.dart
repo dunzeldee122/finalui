@@ -31,8 +31,8 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Logout'),
-          content: SingleChildScrollView(
+          title: const Text('Logout'),
+          content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text('Are you sure you want to log out?'),
@@ -41,13 +41,13 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('No'),
+              child: const Text('No'),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
             ),
             TextButton(
-              child: Text('Yes'),
+              child: const Text('Yes'),
               onPressed: () {
                 // Navigate back to the login screen
                 Navigator.pushReplacement(
@@ -66,12 +66,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: const Text('Home Page'),
         // Add the hamburger icon to open the drawer
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
       ),
       drawer: Drawer(
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/pawbg.jpg'),
               fit: BoxFit.cover,
@@ -92,8 +92,8 @@ class _HomePageState extends State<HomePage> {
             children: [
               // Profile icon or selected image
               Container(
-                padding: EdgeInsets.all(20.0),
-                color: Color(0xFFa67b5b), // Hexadecimal color code
+                padding: const EdgeInsets.all(20.0),
+                color: const Color(0xFFa67b5b), // Hexadecimal color code
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -109,45 +109,45 @@ class _HomePageState extends State<HomePage> {
                       bottom: 0,
                       right: 0,
                       child: IconButton(
-                        icon: Icon(Icons.edit),
+                        icon: const Icon(Icons.edit),
                         onPressed: _getImageFromGallery,
                       ),
                     ),
                   ],
                 ),
               ),
-              ListTile(
+              const ListTile(
                 title: Text(
                   'Name: John Doe',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
-              ListTile(
+              const ListTile(
                 title: Text(
                   'Phone: +1234567890',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
-              ListTile(
+              const ListTile(
                 title: Text(
                   'Email: john.doe@example.com',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
-              ListTile(
+              const ListTile(
                 title: Text(
                   'Address: 123 Main Street',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
-              Spacer(), // Add Spacer to push the buttons to the bottom
+              const Spacer(), // Add Spacer to push the buttons to the bottom
               // Profile button
               ListTile(
-                title: Text(
+                title: const Text(
                   'Profile',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
-                leading: Icon(Icons.person),
+                leading: const Icon(Icons.person),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -157,11 +157,11 @@ class _HomePageState extends State<HomePage> {
               ),
               // Power off button
               ListTile(
-                title: Text(
+                title: const Text(
                   'Logout',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
-                leading: Icon(Icons.power_settings_new),
+                leading: const Icon(Icons.power_settings_new),
                 onTap: () {
                   _showLogoutConfirmationDialog(context);
                 },
@@ -170,7 +170,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Home Page'),
       ),
       floatingActionButton: FloatingActionButton(
@@ -180,8 +180,8 @@ class _HomePageState extends State<HomePage> {
             MaterialPageRoute(builder: (context) => PetRegistrationPage()),
           );
         },
-        child: Icon(Icons.add),
-        backgroundColor: Color(0xFFa67b5b), // Hexadecimal color code
+        child: const Icon(Icons.add),
+        backgroundColor: const Color(0xFFa67b5b), // Hexadecimal color code
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );

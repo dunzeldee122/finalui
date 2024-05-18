@@ -31,8 +31,8 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pet Listed for Adoption'),
-          content: Text('Your pet has been listed for adoption.'),
+          title: const Text('Pet Listed for Adoption'),
+          content: const Text('Your pet has been listed for adoption.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -42,7 +42,7 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                   MaterialPageRoute(builder: (context) => HomePage()), // Navigate to home.dart
                 );
               },
-              child: Text('Close'),
+              child: const Text('Close'),
             ),
           ],
         );
@@ -55,12 +55,12 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
     return Scaffold(
       extendBodyBehindAppBar: true, // Extend body behind AppBar
       appBar: AppBar(
-        title: Text('Pet Registration'),
+        title: const Text('Pet Registration'),
         backgroundColor: Colors.transparent, // Make AppBar transparent
         elevation: 0, // Remove AppBar shadow
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/profilebg.jpg'), // Background image path
             fit: BoxFit.cover,
@@ -75,7 +75,7 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    TextField(
+                    const TextField(
                       style: TextStyle(color: Colors.white), // Change text color to white
                       decoration: InputDecoration(
                         labelText: 'Name',
@@ -83,8 +83,8 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                         fillColor: Color(0xFFa67b5b), // Transparent background color
                       ),
                     ),
-                    SizedBox(height: 10),
-                    TextField(
+                    const SizedBox(height: 10),
+                    const TextField(
                       style: TextStyle(color: Colors.white), // Change text color to white
                       decoration: InputDecoration(
                         labelText: 'Type',
@@ -92,8 +92,8 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                         fillColor: Color(0xFFa67b5b), // Transparent background color
                       ),
                     ),
-                    SizedBox(height: 10),
-                    TextField(
+                    const SizedBox(height: 10),
+                    const TextField(
                       style: TextStyle(color: Colors.white), // Change text color to white
                       decoration: InputDecoration(
                         labelText: 'Breed',
@@ -101,8 +101,8 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                         fillColor: Color(0xFFa67b5b), // Transparent background color
                       ),
                     ),
-                    SizedBox(height: 10),
-                    TextField(
+                    const SizedBox(height: 10),
+                    const TextField(
                       style: TextStyle(color: Colors.white), // Change text color to white
                       decoration: InputDecoration(
                         labelText: 'Trait',
@@ -110,8 +110,8 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                         fillColor: Color(0xFFa67b5b), // Transparent background color
                       ),
                     ),
-                    SizedBox(height: 10),
-                    TextField(
+                    const SizedBox(height: 10),
+                    const TextField(
                       style: TextStyle(color: Colors.white), // Change text color to white
                       decoration: InputDecoration(
                         labelText: 'Color',
@@ -119,8 +119,8 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                         fillColor: Color(0xFFa67b5b), // Transparent background color
                       ),
                     ),
-                    SizedBox(height: 10),
-                    TextField(
+                    const SizedBox(height: 10),
+                    const TextField(
                       style: TextStyle(color: Colors.white), // Change text color to white
                       decoration: InputDecoration(
                         labelText: 'Age',
@@ -128,8 +128,8 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                         fillColor: Color(0xFFa67b5b), // Transparent background color
                       ),
                     ),
-                    SizedBox(height: 10),
-                    TextField(
+                    const SizedBox(height: 10),
+                    const TextField(
                       style: TextStyle(color: Colors.white), // Change text color to white
                       decoration: InputDecoration(
                         labelText: 'Price',
@@ -137,7 +137,7 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                         fillColor: Color(0xFFa67b5b), // Transparent background color
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
                         // Open image picker dialog
@@ -145,20 +145,20 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Select Image'),
+                              title: const Text('Select Image'),
                               content: SingleChildScrollView(
                                 child: ListBody(
                                   children: [
                                     GestureDetector(
-                                      child: Text('Take a picture', style: TextStyle(color: Colors.black)), // Change text color to white
+                                      child: const Text('Take a picture', style: TextStyle(color: Colors.black)), // Change text color to white
                                       onTap: () {
                                         _pickImage(ImageSource.camera);
                                         Navigator.of(context).pop();
                                       },
                                     ),
-                                    SizedBox(height: 20),
+                                    const SizedBox(height: 20),
                                     GestureDetector(
-                                      child: Text('Choose from gallery', style: TextStyle(color: Colors.black)), // Change text color to white
+                                      child: const Text('Choose from gallery', style: TextStyle(color: Colors.black)), // Change text color to white
                                       onTap: () {
                                         _pickImage(ImageSource.gallery);
                                         Navigator.of(context).pop();
@@ -172,19 +172,19 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFa67b5b), // Same color as text field
+                        backgroundColor: const Color(0xFFa67b5b), // Same color as text field
                       ),
-                      child: Text('Select an Image', style: TextStyle(color: Colors.white)), // Change text color to white
+                      child: const Text('Select an Image', style: TextStyle(color: Colors.white)), // Change text color to white
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
                         _registerPet(context); // Call function to register pet
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFa67b5b), // Same color as text field
+                        backgroundColor: const Color(0xFFa67b5b), // Same color as text field
                       ),
-                      child: Text('Register', style: TextStyle(color: Colors.white)), // Change text color to white
+                      child: const Text('Register', style: TextStyle(color: Colors.white)), // Change text color to white
                     ),
                   ],
                 ),
