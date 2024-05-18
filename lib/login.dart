@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register.dart';
 import 'home.dart';
+import 'dbconnection.dart'; // Import dbconnection.dart to access the loginUser function
 
 class LoginPage extends StatelessWidget {
   final TextEditingController un = TextEditingController();
@@ -64,23 +65,26 @@ class LoginPage extends StatelessWidget {
                 const SizedBox(height: 20.0),
                 // Log in button
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // Get the text entered in the username and password fields
                     String username = un.text.trim();
                     String password = pw.text.trim();
 
                     // Check if the username and password are not empty
                     if (username.isNotEmpty && password.isNotEmpty) {
-                      if (username == 'admin' && password == 'admin') {
-                        // Redirect to AdminPage if username and password are 'admin'
-                        Navigator.pushReplacementNamed(context, '/admin');
-                      } else {
-                        // Redirect to HomePage for any other username and password
+                      // Call the loginUser function from dbconnection.dart
+                      bool isLoggedIn = await loginUser(username, password);
+                      if (isLoggedIn) {
+                        // Redirect to HomePage if login is successful
                         Navigator.pushReplacementNamed(context, '/home');
+                      } else {
+                        // Show an error message if login fails
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Invalid username or password.'),
+                        ));
                       }
                     } else {
-                      // Show an error message or handle the case where username or password is empty
-                      // For example:
+                      // Show an error message if username or password is empty
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text('Please enter username and password.'),
                       ));
