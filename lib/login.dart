@@ -1,7 +1,9 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'register.dart';
-import 'home.dart';
 import 'dbconnection.dart';
+import 'home.dart';
+import 'register.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController un = TextEditingController();
@@ -119,5 +121,33 @@ class LoginPage extends StatelessWidget {
       ),
       backgroundColor: Colors.transparent,
     );
+  }
+
+  Future<bool> loginUser(String username, String password) async {
+    try {
+      final conn = getDatabaseConnection();
+
+      // Retrieve hashed password from the database based on the provided username
+      final results = await conn.query('SELECT password FROM user WHERE username = ?', [username]);
+
+      if (results.isNotEmpty) {
+        final storedHashedPassword = results.first['password'];
+
+        // Hash the password entered by the user before comparing
+        String hashedPassword = md5.convert(utf8.encode(password)).toString();
+
+        // Compare the hashed password entered by the user with the hashed password retrieved from the database
+        if (hashedPassword == storedHashedPassword) {
+          print('Login successful for user: $username');
+          return true;
+        }
+      }
+
+      print('Login failed for user: $username');
+      return false;
+    } catch (e) {
+      print('Error during login: $e');
+      return false;
+    }
   }
 }

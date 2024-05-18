@@ -1,5 +1,6 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bcrypt/flutter_bcrypt.dart';
 import 'dbconnection.dart';
 import 'login.dart';
 
@@ -24,179 +25,199 @@ class RegisterPage extends StatelessWidget {
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/uregbg.jpg"),
-                fit: BoxFit.cover,
-              ),
-            ),
+          children: [
+      Container(
+      decoration: const BoxDecoration(
+      image: DecorationImage(
+          image: AssetImage("assets/uregbg.jpg"),
+      fit: BoxFit.cover,
+    ),
+    ),
+    ),
+    Padding(
+    padding: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 20.0),
+    child: SingleChildScrollView(
+    child: Center(
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+    TextField(
+    controller: usernameController,
+    decoration: InputDecoration(
+    labelText: 'Username',
+    filled: true,
+    fillColor: transparentColor,
+    border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10.0),
+    borderSide: BorderSide.none,
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+    ),
+    ),
+    const SizedBox(height: 10),
+    TextField(
+    controller: passwordController,
+    decoration: InputDecoration(
+    labelText: 'Password',
+    filled: true,
+    fillColor: transparentColor,
+    border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10.0),
+    borderSide: BorderSide.none,
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+    ),
+    obscureText: true,
+    ),
+    const SizedBox(height: 10),
+    TextField(
+    controller: firstNameController,
+    decoration: InputDecoration(
+    labelText: 'First Name',
+    filled: true,
+    fillColor: transparentColor,
+    border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10.0),
+    borderSide: BorderSide.none,
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+    ),
+    ),
+    const SizedBox(height: 10),
+    TextField(
+    controller: lastNameController,
+    decoration: InputDecoration(
+      labelText: 'Last Name',
+      filled: true,
+      fillColor: transparentColor,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: BorderSide.none,
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+    ),
+    ),
+      const SizedBox(height: 10),
+      TextField(
+        controller: phoneNumberController,
+        decoration: InputDecoration(
+          labelText: 'Phone Number',
+          filled: true,
+          fillColor: transparentColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide.none,
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 20.0),
-            child: SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    TextField(
-                      controller: usernameController,
-                      decoration: InputDecoration(
-                        labelText: 'Username',
-                        filled: true,
-                        fillColor: transparentColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        filled: true,
-                        fillColor: transparentColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      ),
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: firstNameController,
-                      decoration: InputDecoration(
-                        labelText: 'First Name',
-                        filled: true,
-                        fillColor: transparentColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: lastNameController,
-                      decoration: InputDecoration(
-                        labelText: 'Last Name',
-                        filled: true,
-                        fillColor: transparentColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: phoneNumberController,
-                      decoration: InputDecoration(
-                        labelText: 'Phone Number',
-                        filled: true,
-                        fillColor: transparentColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        filled: true,
-                        fillColor: transparentColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: addressController,
-                      decoration: InputDecoration(
-                        labelText: 'Address',
-                        filled: true,
-                        fillColor: transparentColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          String username = usernameController.text;
-                          String password = passwordController.text;
-                          String firstName = firstNameController.text;
-                          String lastName = lastNameController.text;
-                          String phoneNumber = phoneNumberController.text;
-                          String email = emailController.text;
-                          String address = addressController.text;
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+        ),
+      ),
+      const SizedBox(height: 10),
+      TextField(
+        controller: emailController,
+        decoration: InputDecoration(
+          labelText: 'Email',
+          filled: true,
+          fillColor: transparentColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+        ),
+      ),
+      const SizedBox(height: 10),
+      TextField(
+        controller: addressController,
+        decoration: InputDecoration(
+          labelText: 'Address',
+          filled: true,
+          fillColor: transparentColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+        ),
+      ),
+      const SizedBox(height: 20),
+      Container(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () async {
+            String username = usernameController.text.trim();
+            String password = passwordController.text.trim();
+            String firstName = firstNameController.text.trim();
+            String lastName = lastNameController.text.trim();
+            String phoneNumber = phoneNumberController.text.trim();
+            String email = emailController.text.trim();
+            String address = addressController.text.trim();
 
-                          // Hash the password before storing it
-                          String hashedPassword = await FlutterBcrypt.hashPw(password: password, salt: await FlutterBcrypt.salt());
+            if (username.isNotEmpty && password.isNotEmpty) {
+              // Hash the password using MD5
+              String hashedPassword = md5.convert(utf8.encode(password)).toString();
 
-                          await registerUser(username, hashedPassword, firstName, lastName, phoneNumber, email, address);
+              // Store the password hash
+              await registerUser(username, hashedPassword, firstName, lastName, phoneNumber, email, address);
 
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Success'),
-                                content: const Text('Account has been created.'),
-                                actions: <Widget>[
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => LoginPage()),
-                                      );
-                                    },
-                                    child: const Text('Close'),
-                                  ),
-                                ],
-                              );
-                            },
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Success'),
+                    content: const Text('Account has been created.'),
+                    actions: <Widget>[
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginPage()),
                           );
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.brown,
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.0),
-                          child: Text(
-                            'Register',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
+                        child: const Text('Close'),
                       ),
-                    ),
-                  ],
-                ),
-              ),
+                    ],
+                  );
+                },
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('Please enter username and password.'),
+              ));
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.brown,
+          ),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.0),
+            child: Text(
+              'Register',
+              style: TextStyle(color: Colors.white),
             ),
           ),
-        ],
+        ),
+      ),
+    ],
+    ),
+    ),
+    ),
+    ),
+          ],
       ),
     );
+  }
+}
+Future<void> registerUser(String username, String hashedPassword, String firstName, String lastName, String phoneNumber, String email, String address) async {
+  final conn = getDatabaseConnection();
+
+  try {
+    String createUserQuery = 'INSERT INTO user (username, password, fname, lname, phone, email, address) VALUES (?, ?, ?, ?, ?, ?, ?)';
+
+    await conn.query(createUserQuery, [username, hashedPassword, firstName, lastName, phoneNumber, email, address]);
+    print('User registered successfully');
+  } catch (e) {
+    print('Error during user registration: $e');
+    rethrow;
   }
 }
