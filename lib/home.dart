@@ -1,7 +1,9 @@
-import 'dart:io';
+// home.dart
 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:meowdoption/petlist.dart';
 import 'login.dart'; // Import the login page
 import 'petreg.dart'; // Import the pet registration page
 import 'profile.dart'; // Import the profile page
@@ -144,6 +146,19 @@ class _HomePageState extends State<HomePage> {
               const Spacer(),
               ListTile(
                 title: const Text(
+                  'Pet Listed',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                leading: const Icon(Icons.pets),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PetList(user: widget.userData['uid'].toString())),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text(
                   'Profile',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
@@ -176,7 +191,9 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PetRegistrationPage()),
+            MaterialPageRoute(
+              builder: (context) => PetRegistrationPage(userData: widget.userData),
+            ),
           );
         },
         child: const Icon(Icons.add),

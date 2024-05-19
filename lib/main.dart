@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(userData: userData),
         '/register': (context) => RegisterPage(),
         '/profile': (context) => ProfilePage(),
-        '/petregistration': (context) => PetRegistrationPage(),
+        '/petregistration': (context) => PetRegistrationPage(userData: {},),
         '/admin': (context) => AdminPage(),
         '/petlist': (context) => PetList(user: '',),
         '/newinfo': (context) => NewInfoPage(),
