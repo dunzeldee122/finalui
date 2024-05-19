@@ -4,10 +4,17 @@ import 'package:flutter/material.dart';
 import 'dbconnection.dart';
 import 'home.dart';
 import 'register.dart';
+import 'secret.dart'; // Make sure to import your secret page
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController un = TextEditingController();
   final TextEditingController pw = TextEditingController();
+  int _tapCount = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +23,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          image: const DecorationImage(
+          image: DecorationImage(
             image: AssetImage('assets/loginbg.jpg'),
             fit: BoxFit.cover,
           ),
@@ -27,6 +34,26 @@ class LoginPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _tapCount++;
+                    });
+                    if (_tapCount >= 10) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SecretPage()), // Replace with your secret page
+                      );
+                      _tapCount = 0; // Reset the tap count
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 40.0,
+                    color: Colors.transparent,
+                  ),
+                ),
+                const SizedBox(height: 20.0),
                 Image.asset(
                   'assets/logo.png',
                   width: 100,
