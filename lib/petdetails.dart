@@ -16,7 +16,7 @@ class PetDetailsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(petData['name']),
+        title: const Text('Pet Details'),
       ),
       body: Stack(
         children: [
@@ -32,63 +32,79 @@ class PetDetailsPage extends StatelessWidget {
           ),
           SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // Align children to the left
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height, // Ensure the SingleChildScrollView takes full height
+                  height: MediaQuery.of(context).size.height, //scroll function
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center, // Center the image
+                    crossAxisAlignment: CrossAxisAlignment.start, // fix the image alignment
                     children: [
                       if (petImage != null)
                         Image(image: petImage)
                       else
-                        Image(image: AssetImage('assets/no_image_available.jpg')),
+                        const Image(image: AssetImage('assets/placeholder.jpg')),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+                          crossAxisAlignment: CrossAxisAlignment.start, // text alignment
                           children: [
                             Text(
                               'Name: ${petData['name']}',
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.normal),
+                              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.normal),
                             ),
                             Text(
                               'Type: ${petData['type']}',
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
                             Text(
                               'Breed: ${petData['breed']}',
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
                             Text(
                               'Trait: ${petData['trait']}',
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
                             Text(
                               'Color: ${petData['color']}',
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
                             Text(
                               'Age: ${petData['age']}',
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
                             Text(
                               'Price: \$${petData['price']}',
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
-                            SizedBox(height: 10),
-                            FutureBuilder<String>(
-                              future: fetchUserPhone(petData['uid']),
+                            const SizedBox(height: 10),
+                            FutureBuilder<Map<String, dynamic>>(
+                              future: fetchUserInfo(petData['uid']),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
+                                  return const CircularProgressIndicator();
                                 } else if (snapshot.hasError) {
                                   return Text('Error: ${snapshot.error}');
                                 } else {
-                                  final phone = snapshot.data ?? '';
-                                  return Text(
-                                    'Number: $phone',
-                                    style: TextStyle(fontSize: 20),
+                                  final userData = snapshot.data ?? {};
+                                  final name = '${userData['fname']} ${userData['lname']}';
+                                  final address = userData['address'];
+                                  final phone = userData['phone'];
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Owner Name: $name',
+                                        style: const TextStyle(fontSize: 20),
+                                      ),
+                                      Text(
+                                        'Address: $address',
+                                        style: const TextStyle(fontSize: 20),
+                                      ),
+                                      Text(
+                                        'Phone: $phone',
+                                        style: const TextStyle(fontSize: 20),
+                                      ),
+                                    ],
                                   );
                                 }
                               },
@@ -107,18 +123,18 @@ class PetDetailsPage extends StatelessWidget {
     );
   }
 
-  Future<String> fetchUserPhone(int userId) async {
+  Future<Map<String, dynamic>> fetchUserInfo(int userId) async {
     try {
       final conn = await getDatabaseConnection();
-      final result = await conn.query('SELECT phone FROM user WHERE uid = ?', [userId]);
+      final result = await conn.query('SELECT fname, lname, address, phone FROM user WHERE uid = ?', [userId]);
       if (result.isNotEmpty) {
-        return result.first.fields['phone'] ?? '';
+        return result.first.fields;
       } else {
-        return '';
+        return {};
       }
     } catch (e) {
-      print('Error fetching user phone: $e');
-      return '';
+      print('Error fetching user info: $e');
+      return {};
     }
   }
 }

@@ -23,6 +23,32 @@ class _HomePageState extends State<HomePage> {
   File? _selectedImage;
   final String _defaultAvatar = 'assets/ava.jpg';
   String _searchQuery = '';
+  MemoryImage? _userImage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserImage(widget.userData['uid']);
+  }
+
+  Future<void> _fetchUserImage(int userId) async {
+    try {
+      final conn = await getDatabaseConnection();
+      final result = await conn.query('SELECT userimg FROM user WHERE uid = ?', [userId]);
+
+      if (result.isNotEmpty) {
+        final userImageBlob = result.first.fields['userimg'] as Blob?;
+        if (userImageBlob != null) {
+          final userImageData = userImageBlob.toBytes();
+          setState(() {
+            _userImage = MemoryImage(Uint8List.fromList(userImageData));
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching user image: $e');
+    }
+  }
 
   Future<void> _getImageFromGallery() async {
     final pickedFile = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
@@ -34,6 +60,10 @@ class _HomePageState extends State<HomePage> {
 
       Uint8List imageBytes = await _selectedImage!.readAsBytes();
       await _updateUserImage(widget.userData['uid'], imageBytes);
+      // Update the user image immediately after uploading
+      setState(() {
+        _userImage = MemoryImage(imageBytes);
+      });
     }
   }
 
@@ -127,38 +157,38 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-        title: const Text('Home Page'),
-    leading: Builder(
-    builder: (BuildContext context) {
-    return IconButton(
-    icon: const Icon(Icons.menu),
-    onPressed: () {
-    Scaffold.of(context).openDrawer();
-    },
-    );
-    },
-    ),
-    actions: [
-    IconButton(
-    icon: const Icon(Icons.search),
-    onPressed: () async {
-    final String? query = await showSearch(
-    context: context,
-    delegate: PetSearchDelegate(this),
-    );
-    if (query != null && query.isNotEmpty) {
-    setState(() {
-    _searchQuery = query;
-    });
-    }
-    },
-    ),
-    ],
-    ),
-    drawer: Drawer(
-    child: Container(
-    decoration: const BoxDecoration(
-    image: DecorationImage(
+          title: const Text('Home Page'),
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              );
+            },
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () async {
+                final String? query = await showSearch(
+                  context: context,
+                  delegate: PetSearchDelegate(this),
+                );
+                if (query != null && query.isNotEmpty) {
+                  setState(() {
+                    _searchQuery = query;
+                  });
+                }
+              },
+            ),
+          ],
+        ),
+        drawer: Drawer(
+        child: Container(
+        decoration: const BoxDecoration(
+        image: DecorationImage(
     image: AssetImage('assets/pawbg.jpg'),
     fit: BoxFit.cover,
     ),
@@ -174,9 +204,7 @@ class _HomePageState extends State<HomePage> {
     children: [
     CircleAvatar(
     radius: 50.0,
-    backgroundImage: _selectedImage != null
-    ? FileImage(_selectedImage!)
-        : AssetImage(_defaultAvatar) as ImageProvider<Object>?,
+    backgroundImage: _userImage ?? AssetImage(_defaultAvatar) as ImageProvider<Object>?,
     ),
     Positioned(
     bottom: 0,
@@ -210,112 +238,113 @@ class _HomePageState extends State<HomePage> {
     ListTile(
     title: Text(
     'Address: ${widget.userData['address']}',
-    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    style: const TextStyle(fontWeight:FontWeight.bold, fontSize: 20),
     ),
     ),
-    const Spacer(),
-    ListTile(
-    title: const Text(
-    'Pet Listed',
-    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-    ),
-    leading: const Icon(Icons.pets),
-    onTap: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => PetList(user: widget.userData['uid'].toString())),
-    );
-    },
-    ),
-    ListTile(
-    title: const Text(
-    'Profile',
-    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-    ),
-    leading: const Icon(Icons.person),
-    onTap: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => ProfilePage()),
-    );
-    },
-    ),
-    ListTile(
-    title: const Text(
-    'Logout',
-    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-    ),
-    leading: const Icon(Icons.logout),
-    onTap: () {
-    _showLogoutConfirmationDialog(context);
-    },
-    ),
-    ],
-    ),
-    ),
-    ),
-    body: RefreshIndicator(
-    onRefresh: _refreshHomePage,
-    child: FutureBuilder<List<Map<String, dynamic>>>(
-    future: fetchAllPets(),
-    builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting)
-    {
-      return const Center(child: CircularProgressIndicator());
-    } else if (snapshot.hasError) {
-      return Text('Error: ${snapshot.error}');
-    } else {
-      final pets = snapshot.data ?? [];
-      return ListView.builder(
-        itemCount: pets.length,
-        itemBuilder: (context, index) {
-          final petData = pets[index];
-          return FutureBuilder<MemoryImage?>(
-            future: getPetImage(petData['pui']),
-            builder: (context, imageSnapshot) {
-              if (imageSnapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              } else if (imageSnapshot.hasError) {
-                return Text('Error: ${imageSnapshot.error}');
-              } else if (imageSnapshot.hasData && imageSnapshot.data != null) {
-                return ListTile(
-                  title: Text('${petData['name']}'),
-                  subtitle: Text('Type: ${petData['type']}\nBreed: ${petData['breed']}'),
-                  leading: CircleAvatar(
-                    backgroundImage: imageSnapshot.data,
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => details.PetDetailsPage(petData: petData),
-                      ),
-                    );
-                  },
-                );
-              } else {
-                return ListTile(
-                  title: Text('${petData['name']}'),
-                  subtitle: Text('Type: ${petData['type']}\nBreed: ${petData['breed']}'),
-                  leading: CircleAvatar(), // Placeholder avatar
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => details.PetDetailsPage(petData: petData),
-                      ),
-                    );
-                  },
-                );
-              }
-            },
+
+      const Spacer(),
+      ListTile(
+        title: const Text(
+          'Pet Listed',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        leading: const Icon(Icons.pets),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PetList(user: widget.userData['uid'].toString())),
           );
         },
-      );
-    }
-    },
+      ),
+      ListTile(
+        title: const Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        leading: const Icon(Icons.person),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ProfilePage()),
+          );
+        },
+      ),
+      ListTile(
+        title: const Text(
+          'Logout',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        leading: const Icon(Icons.logout),
+        onTap: () {
+          _showLogoutConfirmationDialog(context);
+        },
+      ),
+    ],
     ),
-    ),
+        ),
+        ),
+      body: RefreshIndicator(
+        onRefresh: _refreshHomePage,
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: fetchAllPets(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting)
+            {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              final pets = snapshot.data ?? [];
+              return ListView.builder(
+                itemCount: pets.length,
+                itemBuilder: (context, index) {
+                  final petData = pets[index];
+                  return FutureBuilder<MemoryImage?>(
+                    future: getPetImage(petData['pui']),
+                    builder: (context, imageSnapshot) {
+                      if (imageSnapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (imageSnapshot.hasError) {
+                        return Text('Error: ${imageSnapshot.error}');
+                      } else if (imageSnapshot.hasData && imageSnapshot.data != null) {
+                        return ListTile(
+                          title: Text('${petData['name']}'),
+                          subtitle: Text('Type: ${petData['type']}\nBreed: ${petData['breed']}'),
+                          leading: CircleAvatar(
+                            backgroundImage: imageSnapshot.data,
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => details.PetDetailsPage(petData: petData),
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return ListTile(
+                          title: Text('${petData['name']}'),
+                          subtitle: Text('Type: ${petData['type']}\nBreed: ${petData['breed']}'),
+                          leading: const CircleAvatar(), // Placeholder avatar
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => details.PetDetailsPage(petData: petData),
+                              ),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  );
+                },
+              );
+            }
+          },
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -343,14 +372,7 @@ class PetSearchDelegate extends SearchDelegate<String> {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-        },
-      )
-    ];
+    return [      IconButton(        icon: const Icon(Icons.clear),        onPressed: () {          query = '';        },      )    ];
   }
 
   @override
@@ -366,53 +388,53 @@ class PetSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: homePageState.fetchFilteredPets(query),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          final pets = snapshot.data ?? [];
-          if (pets.isEmpty) {
-            return Center(
-              child: Text('No pets found for the search query.'),
+        future: homePageState.fetchFilteredPets(query),
+    builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+    return const Center(child: CircularProgressIndicator());
+    } else if (snapshot.hasError) {
+    return Text('Error: ${snapshot.error}');
+    } else {
+    final pets = snapshot.data ?? [];
+    if (pets.isEmpty) {
+    return const Center(
+    child: Text('No pets found for the search query.'),
+    );
+    }
+    return ListView.builder(
+    itemCount: pets.length,
+    itemBuilder: (context, index) {
+    final petData = pets[index];
+    return ListTile(
+    title: Text('${petData['name']}'),
+    subtitle: Text('Type: ${petData['type']}'),
+      leading: FutureBuilder<MemoryImage?>(
+        future: homePageState.getPetImage(petData['pui']),
+        builder: (context, imageSnapshot) {
+          if (imageSnapshot.connectionState == ConnectionState.waiting) {
+            return const CircleAvatar(); // Placeholder avatar
+          } else if (imageSnapshot.hasError || imageSnapshot.data == null) {
+            return const CircleAvatar(); // Placeholder avatar
+          } else {
+            return CircleAvatar(
+              backgroundImage: imageSnapshot.data,
             );
           }
-          return ListView.builder(
-            itemCount: pets.length,
-            itemBuilder: (context, index) {
-              final petData = pets[index];
-              return ListTile(
-                title: Text('${petData['name']}'),
-                subtitle: Text('Type: ${petData['type']}\nBreed: ${petData['breed']}'),
-                leading: FutureBuilder<MemoryImage?>(
-                  future: homePageState.getPetImage(petData['pui']),
-                  builder: (context, imageSnapshot) {
-                    if (imageSnapshot.connectionState == ConnectionState.waiting) {
-                      return const CircleAvatar(); // Placeholder avatar
-                    } else if (imageSnapshot.hasError || imageSnapshot.data == null) {
-                      return const CircleAvatar(); // Placeholder avatar
-                    } else {
-                      return CircleAvatar(
-                        backgroundImage: imageSnapshot.data,
-                      );
-                    }
-                  },
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => details.PetDetailsPage(petData: petData),
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        }
+        },
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => details.PetDetailsPage(petData: petData),
+          ),
+        );
       },
+    );
+    },
+    );
+    }
+    },
     );
   }
 
@@ -421,3 +443,5 @@ class PetSearchDelegate extends SearchDelegate<String> {
     return Container();
   }
 }
+
+
