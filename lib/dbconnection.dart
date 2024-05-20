@@ -149,4 +149,20 @@ Future<List<Map<String, dynamic>>> fetchFilteredPets(String query) async {
   }
 }
 
-
+Future<String> fetchUserPhone(int userId) async {
+  try {
+    final conn = await getDatabaseConnection();
+    final result = await conn.query('SELECT phone FROM user WHERE uid = ?', [userId]);
+    if (result.isNotEmpty) {
+      final phone = result.first.fields['phone'] ?? '';
+      print('Phone number found: $phone');
+      return phone;
+    } else {
+      print('No phone number found for user ID: $userId');
+      return '';
+    }
+  } catch (e) {
+    print('Error fetching user phone: $e');
+    return '';
+  }
+}

@@ -7,6 +7,7 @@ import 'petreg.dart';
 import 'admin.dart';
 import 'petlist.dart';
 import 'newinfo.dart';
+import 'petdetails.dart' as details; // Use alias 'details'
 import 'dbconnection.dart'; // Import dbconnection.dart to initialize the database connection
 
 void main() async {
@@ -34,6 +35,8 @@ class MyApp extends StatelessWidget {
         '/admin': (context) => AdminPage(),
         '/petlist': (context) => PetList(user: '',),
         '/newinfo': (context) => NewInfoPage(),
+        '/petdetails': (context) => details.PetDetailsPage(petData: {}),
+        // Use 'details' alias
       },
     );
   }
