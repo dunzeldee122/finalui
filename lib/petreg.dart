@@ -226,8 +226,7 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFa67b5b),
                       ),
-                      child: const Text('Select an Image',
-                          style: TextStyle(color: Colors.white)),
+                      child: const Text('Select an Image', style: TextStyle(color: Colors.white)),
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
@@ -237,8 +236,7 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFa67b5b),
                       ),
-                      child: const Text('Register',
-                          style: TextStyle(color: Colors.white)),
+                      child: const Text('Register', style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),

@@ -119,3 +119,34 @@ Future<List<Map<String, dynamic>>> getUserPets(int uid) async {
     rethrow;
   }
 }
+Future<List<Map<String, dynamic>>> fetchFilteredPets(String query) async {
+  final conn = getDatabaseConnection();
+
+  try {
+    final results = await conn.query(
+      'SELECT name, type, breed, trait, color, age, price, petimg FROM petinfo WHERE type LIKE ? OR breed LIKE ?',
+      ['%$query%', '%$query%'],
+    );
+
+    return results.map((row) {
+      final fields = row.fields;
+      final petImageBlob = fields['petimg'] as Blob?;
+      final petImageData = petImageBlob?.toBytes() ?? Uint8List(0);
+      return {
+        'name': fields['name'],
+        'type': fields['type'],
+        'breed': fields['breed'],
+        'trait': fields['trait'],
+        'color': fields['color'],
+        'age': fields['age'],
+        'price': fields['price'],
+        'petimg': petImageData,
+      };
+    }).toList();
+  } catch (e) {
+    print('Error fetching filtered pets: $e');
+    return [];
+  }
+}
+
+

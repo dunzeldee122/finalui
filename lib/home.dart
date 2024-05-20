@@ -1,13 +1,13 @@
-// home.dart
-
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mysql1/mysql1.dart';
+import 'package:meowdoption/dbconnection.dart';
 import 'package:meowdoption/petlist.dart';
-import 'login.dart'; // Import the login page
-import 'petreg.dart'; // Import the pet registration page
-import 'profile.dart'; // Import the profile page
-import 'dbconnection.dart'; // Import the database connection
+import 'login.dart';
+import 'petreg.dart';
+import 'profile.dart';
 
 class HomePage extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -20,17 +20,61 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   File? _selectedImage;
-  final String _defaultAvatar = 'assets/ava.jpg'; // Default account icon
+  final String _defaultAvatar = 'assets/ava.jpg';
+  String _searchQuery = '';
 
   Future<void> _getImageFromGallery() async {
-    final pickedFile =
-    await ImagePicker.platform.pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);
       });
+
+      // Convert image to bytes
+      Uint8List imageBytes = await _selectedImage!.readAsBytes();
+
+      // Update the user image in the database
+      await _updateUserImage(widget.userData['uid'], imageBytes);
     }
+  }
+
+  Future<void> _updateUserImage(int userId, Uint8List imageBytes) async {
+    try {
+      final conn = await getDatabaseConnection();
+      await conn.query('UPDATE user SET userimg = ? WHERE uid = ?', [imageBytes, userId]);
+    } catch (e) {
+      print('Error updating user image: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAllPets() async {
+    try {
+      final conn = await getDatabaseConnection();
+      final results = await conn.query('SELECT * FROM petinfo');
+      return results.map((row) => row.fields).toList();
+    } catch (e) {
+      print('Error fetching pet list: $e');
+      return [];
+    }
+  }
+
+  Future<MemoryImage?> getPetImage(int petId) async {
+    try {
+      final conn = await getDatabaseConnection();
+      final result = await conn.query('SELECT petimg FROM petinfo WHERE pui = ?', [petId]);
+
+      if (result.isNotEmpty) {
+        final petImageBlob = result.first.fields['petimg'] as Blob?;
+        if (petImageBlob != null) {
+          final petImageData = petImageBlob.toBytes();
+          return MemoryImage(Uint8List.fromList(petImageData));
+        }
+      }
+    } catch (e) {
+      print('Error fetching pet image: $e');
+    }
+    return null;
   }
 
   Future<void> _showLogoutConfirmationDialog(BuildContext context) async {
@@ -69,6 +113,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> _refreshHomePage() async {
+    setState(() {}); // Refresh the state
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +132,22 @@ class _HomePageState extends State<HomePage> {
             );
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () async {
+              final String? query = await showSearch(
+                context: context,
+                delegate: PetSearchDelegate(),
+              );
+              if (query != null && query.isNotEmpty) {
+                setState(() {
+                  _searchQuery = query;
+                });
+              }
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: Container(
@@ -98,7 +162,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               Container(
                 padding: const EdgeInsets.all(20.0),
-                color: const Color(0xFFa67b5b), // Hexadecimal color code
+                color: const Color(0xFFa67b5b),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -184,22 +248,133 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: const Center(
-        child: Text('Home Page'),
+      body: RefreshIndicator(
+        onRefresh: _refreshHomePage,
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _searchQuery.isNotEmpty
+              ? fetchFilteredPets(_searchQuery)
+              : fetchAllPets(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              final pets = snapshot.data ?? [];
+              return ListView.builder(
+                itemCount: pets.length,
+                itemBuilder: (context, index) {
+                  final petData = pets[index];
+                  return FutureBuilder<MemoryImage?>(
+                    future: getPetImage(petData['pui']),
+                    builder: (context, imageSnapshot) {
+                      if (imageSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (imageSnapshot.hasError) {
+                        return Text('Error: ${imageSnapshot.error}');
+                      } else if (imageSnapshot.hasData &&
+                          imageSnapshot.data != null) {
+                        return ListTile(
+                          title: Text('${petData['name']}'),
+                          subtitle: Text('Type: ${petData['type']}\nBreed: ${petData['breed']}'),
+                          leading: CircleAvatar(
+                            backgroundImage: imageSnapshot.data,
+                          ),
+                        );
+                      } else {
+                        return ListTile(
+                          title: Text('${petData['name']}'),
+                          subtitle: Text('Type: ${petData['type']}\nBreed: ${petData['breed']}'),
+                          leading: const CircleAvatar(),
+                        );
+                      }
+                    },
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PetRegistrationPage(userData: widget.userData),
+              builder: (context) =>
+                  PetRegistrationPage(userData: widget.userData),
             ),
           );
         },
         child: const Icon(Icons.add),
-        backgroundColor: const Color(0xFFa67b5b), // Hexadecimal color code
+        backgroundColor: const Color(0xFFa67b5b),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
+  }
+}
+
+class PetSearchDelegate extends SearchDelegate<String> {
+  @override
+  String get searchFieldLabel => 'Search by Type or Breed';
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      )
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: fetchFilteredPets(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          final pets = snapshot.data ?? [];
+          if (pets.isEmpty) {
+            return Center(
+              child: Text('No pets found for the search query.'),
+            );
+          }
+          return ListView.builder(
+            itemCount: pets.length,
+            itemBuilder: (context, index) {
+              final petData = pets[index];
+              return ListTile(
+                title: Text('${petData['name']}'),
+                subtitle: Text('Type: ${petData['type']}\nBreed: ${petData['breed']}'),
+                leading: const CircleAvatar(), // You can add pet images here if needed
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Container();
   }
 }

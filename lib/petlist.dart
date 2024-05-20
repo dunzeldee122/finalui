@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 import 'package:meowdoption/dbconnection.dart';
 
 class PetList extends StatefulWidget {
@@ -41,9 +42,10 @@ class _PetListState extends State<PetList> {
       final result = await conn.query('SELECT petimg FROM petinfo WHERE pui = ?', [petId]);
 
       if (result.isNotEmpty) {
-        final petImageData = result.first.fields['petimg'] as Uint8List?;
-        if (petImageData != null) {
-          return MemoryImage(petImageData);
+        final petImageBlob = result.first.fields['petimg'] as Blob?;
+        if (petImageBlob != null) {
+          final petImageData = petImageBlob.toBytes();
+          return MemoryImage(Uint8List.fromList(petImageData));
         }
       }
     } catch (e) {
@@ -52,11 +54,21 @@ class _PetListState extends State<PetList> {
     return null;
   }
 
+  Future<void> deletePet(int petId) async {
+    try {
+      final conn = getDatabaseConnection();
+      await conn.query('DELETE FROM petinfo WHERE pui = ?', [petId]);
+      fetchPetList(); // Refresh the pet list after deletion
+    } catch (e) {
+      print('Error deleting pet: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pet Listed of ${widget.user}'), // Show user name in the app bar
+        title: Text('Pet Listed of ${widget.user}'),
       ),
       body: ListView.builder(
         itemCount: pets.length,
@@ -79,9 +91,18 @@ class _PetListState extends State<PetList> {
                   trailing: IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () {
-                      // Implement deletion logic
+                      deletePet(petData['pui']); // Call delete function
                     },
                   ),
+                  onTap: () {
+                    // Navigate to pet details view
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PetDetailsPage(petData: petData),
+                      ),
+                    );
+                  },
                 );
               } else {
                 return Text('No Image');
@@ -89,6 +110,31 @@ class _PetListState extends State<PetList> {
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class PetDetailsPage extends StatelessWidget {
+  final Map<String, dynamic> petData;
+
+  const PetDetailsPage({Key? key, required this.petData}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(petData['name']),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Type: ${petData['type']}'),
+            Text('Breed: ${petData['breed']}'),
+            // Add more details as needed
+          ],
+        ),
       ),
     );
   }
