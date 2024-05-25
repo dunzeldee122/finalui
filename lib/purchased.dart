@@ -79,7 +79,7 @@ class _PurchasedPageState extends State<PurchasedPage> {
                   : Container();
               return ListTile(
                 leading: petImageWidget,
-                title: Text('Item: ${purchase['name']}'),
+                title: Text('Name: ${purchase['name']}'),
                 subtitle: Text('Price: \$${purchase['price']}'),
               );
             },
