@@ -1,3 +1,4 @@
+// main.dart
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'home.dart';
@@ -6,7 +7,7 @@ import 'profile.dart';
 import 'petreg.dart';
 import 'admin.dart';
 import 'petlist.dart';
-import 'newinfo.dart';
+import 'purchased.dart';
 import 'petdetails.dart' as details; // Use alias 'details'
 import 'dbconnection.dart'; // Import dbconnection.dart to initialize the database connection
 
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => LoginPage(),
         '/home': (context) => HomePage(userData: userData),
         '/register': (context) => RegisterPage(),
-        '/profile': (context) => ProfilePage(),
+        '/profile': (context) => ProfilePage(userData: {}, userId: null,),
         '/petregistration': (context) => PetRegistrationPage(userData: {},),
         '/admin': (context) => AdminPage(),
         '/petlist': (context) => PetList(user: '',),

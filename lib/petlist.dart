@@ -94,15 +94,6 @@ class _PetListState extends State<PetList> {
                       deletePet(petData['pui']); // Call delete function
                     },
                   ),
-                  onTap: () {
-                    // Navigate to pet details view
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PetDetailsPage(petData: petData),
-                      ),
-                    );
-                  },
                 );
               } else {
                 return Text('No Image');
@@ -115,27 +106,4 @@ class _PetListState extends State<PetList> {
   }
 }
 
-class PetDetailsPage extends StatelessWidget {
-  final Map<String, dynamic> petData;
 
-  const PetDetailsPage({Key? key, required this.petData}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(petData['name']),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Type: ${petData['type']}'),
-            Text('Breed: ${petData['breed']}'),
-            // Add more details as needed
-          ],
-        ),
-      ),
-    );
-  }
-}

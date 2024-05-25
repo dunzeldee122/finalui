@@ -262,13 +262,22 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         leading: const Icon(Icons.person),
-        onTap: () {
-          Navigator.push(
+        onTap: () async {
+          final updatedUserData = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ProfilePage()),
+            MaterialPageRoute(
+              builder: (context) => ProfilePage(userId: widget.userData['uid'], userData: widget.userData),
+            ),
           );
+
+          if (updatedUserData != null) {
+            setState(() {
+              widget.userData.addAll(updatedUserData);
+            });
+          }
         },
       ),
+
       ListTile(
         title: const Text(
           'Logout',

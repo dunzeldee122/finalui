@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:mysql1/mysql1.dart';
 
 late MySqlConnection _connection;
-
+//connection
 Future<void> initializeDatabase() async {
   final settings = ConnectionSettings(
     host: '192.168.0.31',
@@ -24,7 +24,10 @@ Future<void> initializeDatabase() async {
 MySqlConnection getDatabaseConnection() {
   return _connection;
 }
+//query to call
 
+
+//petregister
 Future<void> registerPet({
   required int userId,
   required String name,
@@ -66,6 +69,8 @@ Future<void> disposeDatabase() async {
   print('Database connection closed');
 }
 
+
+//fetching user data
 Future<Map<String, dynamic>> getUserData(int uid) async {
   final conn = getDatabaseConnection();
 
@@ -91,7 +96,7 @@ Future<Map<String, dynamic>> getUserData(int uid) async {
     rethrow;
   }
 }
-
+//fetching pets info
 Future<List<Map<String, dynamic>>> getUserPets(int uid) async {
   final conn = getDatabaseConnection();
 
@@ -118,6 +123,8 @@ Future<List<Map<String, dynamic>>> getUserPets(int uid) async {
     print('Error fetching user pets: $e');
     rethrow;
   }
+
+  //fetching searched pet
 }
 Future<List<Map<String, dynamic>>> fetchFilteredPets(String query) async {
   final conn = getDatabaseConnection();
@@ -147,6 +154,9 @@ Future<List<Map<String, dynamic>>> fetchFilteredPets(String query) async {
     print('Error fetching filtered pets: $e');
     return [];
   }
+
+
+  //fetching user phone number to display
 }
 
 Future<String> fetchUserPhone(int userId) async {
