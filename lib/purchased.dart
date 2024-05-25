@@ -77,9 +77,9 @@ Future<List<Map<String, dynamic>>> getPurchasesForUser(int? userId) async {
       // Convert each row into a map
       Map<String, dynamic> purchaseMap = {};
       row.fields.forEach((key, value) {
-        if (value is Blob) {
-          // Convert Blob to base64 string
-          purchaseMap[key] = base64Encode(value.toBytes());
+        if (key == 'petimg' && value is Blob) {
+          // Directly store the Blob
+          purchaseMap[key] = value;
         } else {
           purchaseMap[key] = value;
         }
