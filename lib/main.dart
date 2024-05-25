@@ -1,4 +1,5 @@
 // main.dart
+
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'home.dart';
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
         '/petlist': (context) => PetList(user: '',),
         '/purchased': (context) => PurchasedPage(userId: userData['uid']),
 
-        '/petdetails': (context) => details.PetDetailsPage(petData: {}),
+        '/petdetails': (context) => details.PetDetailsPage(petData: {}, userId: userData['uid']),
+
         // Use 'details' alias
       },
     );

@@ -160,156 +160,155 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-        title: const Text('Home Page'),
-    leading: Builder(
-    builder: (BuildContext context) {
-    return IconButton(
-    icon: const Icon(Icons.menu),
-    onPressed: () {
-    Scaffold.of(context).openDrawer();
-    },
-    );
-    },
-    ),
-    actions: [
-    IconButton(
-    icon: const Icon(Icons.search),
-    onPressed: () async {
-    final String? query = await showSearch(
-    context: context,
-    delegate: PetSearchDelegate(this),
-    );
-    if (query != null && query.isNotEmpty) {
-    setState(() {
-    _searchQuery = query;
-    });
-    }
-    },
-    ),
-    ],
-    ),
-    drawer:Drawer(
-      child: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/pawbg.jpg'),
-            fit: BoxFit.cover,
+          title: const Text('Home Page'),
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              );
+            },
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20.0),
-              color: const Color(0xFFa67b5b),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 50.0,
-                    backgroundImage: _userImage ?? AssetImage(_defaultAvatar) as ImageProvider<Object>?,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: _getImageFromGallery,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              title: Text(
-                'Name: ${widget.userData['fname']} ${widget.userData['lname']}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-            ),
-            ListTile(
-              title: Text(
-                'Phone: ${widget.userData['phone']}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-            ),
-            ListTile(
-              title: Text(
-                'Email: ${widget.userData['email']}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-            ),
-            ListTile(
-              title: Text(
-                'Address: ${widget.userData['address']}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-            ),
-            const Spacer(),
-            ListTile(
-              title: const Text(
-                'Purchases',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              leading: const Icon(Icons.shopping_cart),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PurchasedPage(userId: widget.userData['uid']),
-                  ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () async {
+                final String? query = await showSearch(
+                  context: context,
+                  delegate: PetSearchDelegate(this, widget.userData['uid']), // Pass userId
                 );
-              },
-            ),
-            ListTile(
-              title: const Text(
-                'Pet Listed',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              leading: const Icon(Icons.pets),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PetList(user: widget.userData['uid'].toString())),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text(
-                'Profile',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              leading: const Icon(Icons.person),
-              onTap: () async {
-                final updatedUserData = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfilePage(userId: widget.userData['uid'], userData: widget.userData),
-                  ),
-                );
-
-                if (updatedUserData != null) {
+                if (query != null && query.isNotEmpty) {
                   setState(() {
-                    widget.userData.addAll(updatedUserData);
+                    _searchQuery = query;
                   });
                 }
               },
             ),
-
-            ListTile(
-              title: const Text(
-                'Logout',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              leading: const Icon(Icons.logout),
-              onTap: () {
-                _showLogoutConfirmationDialog(context);
-              },
-            ),
           ],
         ),
+        drawer: Drawer(
+        child: Container(
+        decoration: const BoxDecoration(
+        image: DecorationImage(
+    image: AssetImage('assets/pawbg.jpg'),
+    fit: BoxFit.cover,
+    ),
+    ),
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+    Container(
+    padding: const EdgeInsets.all(20.0),
+    color: const Color(0xFFa67b5b),
+    child: Stack(
+    alignment: Alignment.center,
+    children: [
+    CircleAvatar(
+    radius: 50.0,
+    backgroundImage: _userImage ?? AssetImage(_defaultAvatar) as ImageProvider<Object>?,
+    ),
+    Positioned(
+    bottom: 0,
+    right: 0,
+    child: IconButton(
+    icon: const Icon(Icons.edit),
+    onPressed: _getImageFromGallery,
+    ),
+    ),
+    ],
+    ),
+    ),
+    ListTile(
+    title: Text(
+    'Name: ${widget.userData['fname']} ${widget.userData['lname']}',
+    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    ),
+    ),
+    ListTile(
+    title: Text(
+    'Phone: ${widget.userData['phone']}',
+    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    ),
+    ),
+    ListTile(
+    title: Text(
+    'Email: ${widget.userData['email']}',
+    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    ),
+    ),
+    ListTile(
+    title: Text(
+    'Address: ${widget.userData['address']}',
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    ),
+    ),
+      const Spacer(),
+      ListTile(
+        title: const Text(
+          'Purchases',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        leading: const Icon(Icons.shopping_cart),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PurchasedPage(userId: widget.userData['uid']),
+            ),
+          );
+        },
       ),
-    )
-      ,
+      ListTile(
+        title: const Text(
+          'Pet Listed',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        leading: const Icon(Icons.pets),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PetList(user: widget.userData['uid'].toString())),
+          );
+        },
+      ),
+      ListTile(
+        title: const Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        leading: const Icon(Icons.person),
+        onTap: () async {
+          final updatedUserData = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfilePage(userId: widget.userData['uid'], userData: widget.userData),
+            ),
+          );
+
+          if (updatedUserData != null) {
+            setState(() {
+              widget.userData.addAll(updatedUserData);
+            });
+          }
+        },
+      ),
+
+      ListTile(
+        title: const Text(
+          'Logout',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        leading: const Icon(Icons.logout),
+        onTap: () {
+          _showLogoutConfirmationDialog(context);
+        },
+      ),
+    ],
+    ),
+        ),
+        ),
       body: RefreshIndicator(
         onRefresh: _refreshHomePage,
         child: FutureBuilder<List<Map<String, dynamic>>>(
@@ -343,7 +342,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => details.PetDetailsPage(petData: petData),
+                                builder: (context) => details.PetDetailsPage(petData: petData, userId: widget.userData['uid']),
                               ),
                             );
                           },
@@ -357,7 +356,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => details.PetDetailsPage(petData: petData),
+                                builder: (context) => details.PetDetailsPage(petData: petData, userId: widget.userData['uid']),
                               ),
                             );
                           },
@@ -390,22 +389,16 @@ class _HomePageState extends State<HomePage> {
 
 class PetSearchDelegate extends SearchDelegate<String> {
   final _HomePageState homePageState;
+  final int userId;
 
-  PetSearchDelegate(this.homePageState);
+  PetSearchDelegate(this.homePageState, this.userId);
 
   @override
   String get searchFieldLabel => 'Search by Type or Breed';
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-        },
-      )
-    ];
+    return [      IconButton(        icon: const Icon(Icons.clear),onPressed:(){query='';},)];
   }
 
   @override
@@ -459,7 +452,7 @@ class PetSearchDelegate extends SearchDelegate<String> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => details.PetDetailsPage(petData: petData),
+                      builder: (context) => details.PetDetailsPage(petData: petData, userId: userId), // Use userId here
                     ),
                   );
                 },
