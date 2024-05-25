@@ -45,38 +45,49 @@ class _PurchasedPageState extends State<PurchasedPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text('Purchased'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body: _isLoading
-          ? Center(
-        child: CircularProgressIndicator(),
-      )
-          : purchases.isNotEmpty
-          ? RefreshIndicator(
-        onRefresh: fetchPurchases,
-        child: ListView.builder(
-          itemCount: purchases.length,
-          itemBuilder: (context, index) {
-            final purchase = purchases[index];
-            final petImageBytes = purchase['petimg'] as Blob?;
-            final petImageWidget = petImageBytes != null
-                ? Image.memory(
-              Uint8List.fromList(petImageBytes.toBytes()),
-              width: 50,
-              height: 50,
-            )
-                : Container();
-            return ListTile(
-              leading: petImageWidget,
-              title: Text('Item: ${purchase['name']}'),
-              subtitle: Text('Price: \$${purchase['price']}'),
-            );
-          },
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/fly.jpg'), // Background image
+            fit: BoxFit.cover,
+          ),
         ),
-      )
-          : Center(
-        child: Text('No purchases found.'),
+        child: _isLoading
+            ? Center(
+          child: CircularProgressIndicator(),
+        )
+            : purchases.isNotEmpty
+            ? RefreshIndicator(
+          onRefresh: fetchPurchases,
+          child: ListView.builder(
+            itemCount: purchases.length,
+            itemBuilder: (context, index) {
+              final purchase = purchases[index];
+              final petImageBytes = purchase['petimg'] as Blob?;
+              final petImageWidget = petImageBytes != null
+                  ? Image.memory(
+                Uint8List.fromList(petImageBytes.toBytes()),
+                width: 50,
+                height: 50,
+              )
+                  : Container();
+              return ListTile(
+                leading: petImageWidget,
+                title: Text('Item: ${purchase['name']}'),
+                subtitle: Text('Price: \$${purchase['price']}'),
+              );
+            },
+          ),
+        )
+            : Center(
+          child: Text('No purchases found.'),
+        ),
       ),
     );
   }
