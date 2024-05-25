@@ -9,6 +9,7 @@ import 'login.dart';
 import 'petreg.dart';
 import 'profile.dart';
 import 'petdetails.dart' as details;
+import 'purchased.dart';
 
 class HomePage extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -104,6 +105,7 @@ class _HomePageState extends State<HomePage> {
     }
     return null;
   }
+
   Future<List<Map<String, dynamic>>> fetchFilteredPets(String query) async {
     try {
       final conn = await getDatabaseConnection();
@@ -114,6 +116,7 @@ class _HomePageState extends State<HomePage> {
       return [];
     }
   }
+
   Future<void> _showLogoutConfirmationDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
@@ -157,148 +160,162 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Home Page'),
-          leading: Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              );
-            },
+        title: const Text('Home Page'),
+    leading: Builder(
+    builder: (BuildContext context) {
+    return IconButton(
+    icon: const Icon(Icons.menu),
+    onPressed: () {
+    Scaffold.of(context).openDrawer();
+    },
+    );
+    },
+    ),
+    actions: [
+    IconButton(
+    icon: const Icon(Icons.search),
+    onPressed: () async {
+    final String? query = await showSearch(
+    context: context,
+    delegate: PetSearchDelegate(this),
+    );
+    if (query != null && query.isNotEmpty) {
+    setState(() {
+    _searchQuery = query;
+    });
+    }
+    },
+    ),
+    ],
+    ),
+    drawer:Drawer(
+      child: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/pawbg.jpg'),
+            fit: BoxFit.cover,
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () async {
-                final String? query = await showSearch(
-                  context: context,
-                  delegate: PetSearchDelegate(this),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20.0),
+              color: const Color(0xFFa67b5b),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 50.0,
+                    backgroundImage: _userImage ?? AssetImage(_defaultAvatar) as ImageProvider<Object>?,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: _getImageFromGallery,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Name: ${widget.userData['fname']} ${widget.userData['lname']}',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Phone: ${widget.userData['phone']}',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Email: ${widget.userData['email']}',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Address: ${widget.userData['address']}',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ),
+            const Spacer(),
+            ListTile(
+              title: const Text(
+                'Purchases',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              leading: const Icon(Icons.shopping_cart),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PurchasedPage(userData: widget.userData),
+                  ),
                 );
-                if (query != null && query.isNotEmpty) {
+              },
+            ),
+            ListTile(
+              title: const Text(
+                'Pet Listed',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              leading: const Icon(Icons.pets),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PetList(user: widget.userData['uid'].toString())),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text(
+                'Profile',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              leading: const Icon(Icons.person),
+              onTap: () async {
+                final updatedUserData = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(userId: widget.userData['uid'], userData: widget.userData),
+                  ),
+                );
+
+                if (updatedUserData != null) {
                   setState(() {
-                    _searchQuery = query;
+                    widget.userData.addAll(updatedUserData);
                   });
                 }
               },
             ),
+
+            ListTile(
+              title: const Text(
+                'Logout',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              leading: const Icon(Icons.logout),
+              onTap: () {
+                _showLogoutConfirmationDialog(context);
+              },
+            ),
           ],
         ),
-        drawer: Drawer(
-        child: Container(
-        decoration: const BoxDecoration(
-        image: DecorationImage(
-    image: AssetImage('assets/pawbg.jpg'),
-    fit: BoxFit.cover,
-    ),
-    ),
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-    Container(
-    padding: const EdgeInsets.all(20.0),
-    color: const Color(0xFFa67b5b),
-    child: Stack(
-    alignment: Alignment.center,
-    children: [
-    CircleAvatar(
-    radius: 50.0,
-    backgroundImage: _userImage ?? AssetImage(_defaultAvatar) as ImageProvider<Object>?,
-    ),
-    Positioned(
-    bottom: 0,
-    right: 0,
-    child: IconButton(
-    icon: const Icon(Icons.edit),
-    onPressed: _getImageFromGallery,
-    ),
-    ),
-    ],
-    ),
-    ),
-    ListTile(
-    title: Text(
-    'Name: ${widget.userData['fname']} ${widget.userData['lname']}',
-    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-    ),
-    ),
-    ListTile(
-    title: Text(
-    'Phone: ${widget.userData['phone']}',
-    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-    ),
-    ),
-    ListTile(
-    title: Text(
-    'Email: ${widget.userData['email']}',
-    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-    ),
-    ),
-    ListTile(
-    title: Text(
-    'Address: ${widget.userData['address']}',
-    style: const TextStyle(fontWeight:FontWeight.bold, fontSize: 20),
-    ),
-    ),
-
-      const Spacer(),
-      ListTile(
-        title: const Text(
-          'Pet Listed',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        leading: const Icon(Icons.pets),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PetList(user: widget.userData['uid'].toString())),
-          );
-        },
       ),
-      ListTile(
-        title: const Text(
-          'Profile',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        leading: const Icon(Icons.person),
-        onTap: () async {
-          final updatedUserData = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProfilePage(userId: widget.userData['uid'], userData: widget.userData),
-            ),
-          );
-
-          if (updatedUserData != null) {
-            setState(() {
-              widget.userData.addAll(updatedUserData);
-            });
-          }
-        },
-      ),
-
-      ListTile(
-        title: const Text(
-          'Logout',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        leading: const Icon(Icons.logout),
-        onTap: () {
-          _showLogoutConfirmationDialog(context);
-        },
-      ),
-    ],
-    ),
-        ),
-        ),
+    )
+      ,
       body: RefreshIndicator(
         onRefresh: _refreshHomePage,
         child: FutureBuilder<List<Map<String, dynamic>>>(
           future: fetchAllPets(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting)
-            {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
@@ -381,7 +398,14 @@ class PetSearchDelegate extends SearchDelegate<String> {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [      IconButton(        icon: const Icon(Icons.clear),        onPressed: () {          query = '';        },      )    ];
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      )
+    ];
   }
 
   @override
@@ -397,53 +421,53 @@ class PetSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
-        future: homePageState.fetchFilteredPets(query),
-    builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-    return const Center(child: CircularProgressIndicator());
-    } else if (snapshot.hasError) {
-    return Text('Error: ${snapshot.error}');
-    } else {
-    final pets = snapshot.data ?? [];
-    if (pets.isEmpty) {
-    return const Center(
-    child: Text('No pets found for the search query.'),
-    );
-    }
-    return ListView.builder(
-    itemCount: pets.length,
-    itemBuilder: (context, index) {
-    final petData = pets[index];
-    return ListTile(
-    title: Text('${petData['name']}'),
-    subtitle: Text('Type: ${petData['type']}'),
-      leading: FutureBuilder<MemoryImage?>(
-        future: homePageState.getPetImage(petData['pui']),
-        builder: (context, imageSnapshot) {
-          if (imageSnapshot.connectionState == ConnectionState.waiting) {
-            return const CircleAvatar(); // Placeholder avatar
-          } else if (imageSnapshot.hasError || imageSnapshot.data == null) {
-            return const CircleAvatar(); // Placeholder avatar
-          } else {
-            return CircleAvatar(
-              backgroundImage: imageSnapshot.data,
+      future: homePageState.fetchFilteredPets(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          final pets = snapshot.data ?? [];
+          if (pets.isEmpty) {
+            return const Center(
+              child: Text('No pets found for the search query.'),
             );
           }
-        },
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => details.PetDetailsPage(petData: petData),
-          ),
-        );
+          return ListView.builder(
+            itemCount: pets.length,
+            itemBuilder: (context, index) {
+              final petData = pets[index];
+              return ListTile(
+                title: Text('${petData['name']}'),
+                subtitle: Text('Type: ${petData['type']}'),
+                leading: FutureBuilder<MemoryImage?>(
+                  future: homePageState.getPetImage(petData['pui']),
+                  builder: (context, imageSnapshot) {
+                    if (imageSnapshot.connectionState == ConnectionState.waiting) {
+                      return const CircleAvatar(); // Placeholder avatar
+                    } else if (imageSnapshot.hasError || imageSnapshot.data == null) {
+                      return const CircleAvatar(); // Placeholder avatar
+                    } else {
+                      return CircleAvatar(
+                        backgroundImage: imageSnapshot.data,
+                      );
+                    }
+                  },
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => details.PetDetailsPage(petData: petData),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        }
       },
-    );
-    },
-    );
-    }
-    },
     );
   }
 
@@ -452,5 +476,3 @@ class PetSearchDelegate extends SearchDelegate<String> {
     return Container();
   }
 }
-
-

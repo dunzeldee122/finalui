@@ -1,16 +1,18 @@
-//info of user when it press from the admin page
-
 import 'package:flutter/material.dart';
 
-class NewInfoPage extends StatelessWidget {
+class PurchasedPage extends StatelessWidget {
+  final Map<String, dynamic> userData;
+
+  const PurchasedPage({Key? key, required this.userData}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('New Info Page'),
+        title: Text('Purchased'),
       ),
       body: Center(
-        child: Text('This is the New Info Page'),
+        child: Text('This is the Purchased Page'),
       ),
     );
   }
