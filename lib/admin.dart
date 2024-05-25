@@ -18,7 +18,7 @@ class _AdminPageState extends State<AdminPage> {
 
   Future<void> fetchUserList() async {
     try {
-      final conn = getDatabaseConnection();
+      final conn = await getDatabaseConnection();
       final results = await conn.query('SELECT * FROM user');
 
       setState(() {
@@ -71,10 +71,17 @@ class _AdminPageState extends State<AdminPage> {
 
   Future<void> deleteUser(int uid) async {
     try {
-      final conn = getDatabaseConnection();
-      await conn.query('DELETE FROM petinfo WHERE uid = ?', [uid]);
-      await conn.query('DELETE FROM user WHERE uid = ?', [uid]);
-      fetchUserList(); // Refresh user list after deletion
+      final conn = await getDatabaseConnection();
+      await conn.transaction((trans) async {
+        // Delete associated records from the `purchased` table
+        await trans.query('DELETE FROM purchased WHERE user_id = ?', [uid]);
+        await trans.query('DELETE FROM purchased WHERE pet_id IN (SELECT pui FROM petinfo WHERE uid = ?)', [uid]);
+        // Delete associated pet info from the `petinfo` table
+        await trans.query('DELETE FROM petinfo WHERE uid = ?', [uid]);
+        // Delete the user record from the `user` table
+        await trans.query('DELETE FROM user WHERE uid = ?', [uid]);
+        fetchUserList(); // Refresh user list after deletion
+      });
     } catch (e) {
       print('Error deleting user: $e');
     }

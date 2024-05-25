@@ -58,8 +58,11 @@ class _SecretPageState extends State<SecretPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true, // behind AppBar so i can see the full bg
       appBar: AppBar(
-        title: Text('Secret Page'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+
       ),
       body: Center(
         child: Column(
