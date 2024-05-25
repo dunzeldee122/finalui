@@ -26,7 +26,8 @@ class _PetListState extends State<PetList> {
   Future<void> fetchPetList() async {
     try {
       final conn = getDatabaseConnection();
-      final results = await conn.query('SELECT * FROM petinfo WHERE uid = ?', [widget.user]);
+      final results = await conn.query(
+          'SELECT * FROM petinfo WHERE uid = ?', [widget.user]);
 
       setState(() {
         pets = results.map((row) => row.fields).toList();
@@ -39,7 +40,8 @@ class _PetListState extends State<PetList> {
   Future<MemoryImage?> getPetImage(int petId) async {
     try {
       final conn = getDatabaseConnection();
-      final result = await conn.query('SELECT petimg FROM petinfo WHERE pui = ?', [petId]);
+      final result = await conn.query(
+          'SELECT petimg FROM petinfo WHERE pui = ?', [petId]);
 
       if (result.isNotEmpty) {
         final petImageBlob = result.first.fields['petimg'] as Blob?;
@@ -57,8 +59,11 @@ class _PetListState extends State<PetList> {
   Future<void> deletePet(int petId) async {
     try {
       final conn = getDatabaseConnection();
-      await conn.query('DELETE FROM petinfo WHERE pui = ?', [petId]);
-      fetchPetList(); // Refresh the pet list after deletion
+      await conn.transaction((trans) async {
+        await trans.query('DELETE FROM purchased WHERE pet_id = ?', [petId]);
+        await trans.query('DELETE FROM petinfo WHERE pui = ?', [petId]);
+        fetchPetList(); // Refresh the pet list after deletion
+      });
     } catch (e) {
       print('Error deleting pet: $e');
     }
@@ -67,43 +72,57 @@ class _PetListState extends State<PetList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true, // behind AppBar so i can see the full bg
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text('Pet Listed'),
       ),
-      body: ListView.builder(
-        itemCount: pets.length,
-        itemBuilder: (context, index) {
-          final petData = pets[index];
-          return FutureBuilder<MemoryImage?>(
-            future: getPetImage(petData['pui']),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (snapshot.hasData && snapshot.data != null) {
-                return ListTile(
-                  title: Text('${petData['name']}'),
-                  subtitle: Text('Type: ${petData['type']}\nBreed: ${petData['breed']}'),
-                  leading: CircleAvatar(
-                    backgroundImage: snapshot.data,
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      deletePet(petData['pui']); //delete function
-                    },
-                  ),
-                );
-              } else {
-                return Text('No Image');
-              }
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/list2.jpg'), //background image
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          ListView.builder(
+            itemCount: pets.length,
+            itemBuilder: (context, index) {
+              final petData = pets[index];
+              return FutureBuilder<MemoryImage?>(
+                future: getPetImage(petData['pui']),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (snapshot.hasData && snapshot.data != null) {
+                    return ListTile(
+                      title: Text('${petData['name']}'),
+                      subtitle: Text(
+                          'Type: ${petData['type']}\nBreed: ${petData['breed']}'),
+                      leading: CircleAvatar(
+                        backgroundImage: snapshot.data,
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          deletePet(petData['pui']); //delete function
+                        },
+                      ),
+                    );
+                  } else {
+                    return Text('No Image');
+                  }
+                },
+              );
             },
-          );
-        },
+          ),
+        ],
       ),
     );
   }
 }
-
-
