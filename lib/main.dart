@@ -35,7 +35,8 @@ class MyApp extends StatelessWidget {
         '/petregistration': (context) => PetRegistrationPage(userData: {},),
         '/admin': (context) => AdminPage(),
         '/petlist': (context) => PetList(user: '',),
-        '/purchased': (context) => PurchasedPage(userData: userData),
+        '/purchased': (context) => PurchasedPage(userId: userData['uid']),
+
         '/petdetails': (context) => details.PetDetailsPage(petData: {}),
         // Use 'details' alias
       },

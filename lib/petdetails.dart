@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:meowdoption/dbconnection.dart';
 import 'package:mysql1/mysql1.dart';
+import 'purchased.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final Map<String, dynamic> petData;
@@ -108,6 +109,34 @@ class PetDetailsPage extends StatelessWidget {
                                   );
                                 }
                               },
+                            ),
+                            const SizedBox(height: 20),
+                            Center(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color.fromRGBO(166, 123, 91, 0.5),
+                                ),
+                                onPressed: () {
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Success'),
+                                    ),
+                                  );
+
+                                  // Navigate to PurchasedPage
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PurchasedPage(userId: petData['uid']), // Pass the userID
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  petData['price'] > 0 ? 'Buy' : 'Adopt',
+                                  style: TextStyle(fontSize: 18, color: Colors.white),
+                                ),
+                              ),
                             ),
                           ],
                         ),

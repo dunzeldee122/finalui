@@ -255,7 +255,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PurchasedPage(userData: widget.userData),
+                    builder: (context) => PurchasedPage(userId: widget.userData['uid']),
                   ),
                 );
               },
