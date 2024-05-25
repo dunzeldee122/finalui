@@ -3,7 +3,7 @@ import 'package:mysql1/mysql1.dart';
 import 'dbconnection.dart';
 
 class ProfilePage extends StatefulWidget {
-  final int? userId; // Make userId nullable
+  final int? userId;
 
   const ProfilePage({Key? key, this.userId, required Map userData}) : super(key: key);
 
@@ -32,7 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _fetchUserData() async {
     if (widget.userId == null) {
-      // Handle the case where userId is null
+
       return;
     }
 
@@ -168,11 +168,11 @@ class _ProfilePageState extends State<ProfilePage> {
     ),
     ),
     ),
-    SingleChildScrollView( // Wrap with SingleChildScrollView
+    SingleChildScrollView(
     child: Column(
     children: [
-    SizedBox(height: MediaQuery.of(context).padding.top), // To handle safe area
-    const SizedBox(height: kToolbarHeight), // To reserve space for the back button
+    SizedBox(height: MediaQuery.of(context).padding.top),
+    const SizedBox(height: kToolbarHeight),
     Padding(
     padding: const EdgeInsets.all(16.0),
     child: TextField(

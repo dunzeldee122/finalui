@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'dbconnection.dart';
 import 'home.dart';
 import 'register.dart';
-import 'secret.dart'; // Make sure to import your secret page
+import 'secret.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -42,9 +42,9 @@ class _LoginPageState extends State<LoginPage> {
                     if (_tapCount >= 10) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SecretPage()), // Replace with your secret page
+                        MaterialPageRoute(builder: (context) => SecretPage()), // secret page
                       );
-                      _tapCount = 0; // Reset the tap count
+                      _tapCount = 0; // Reset tap count
                     }
                   },
                   child: Container(
@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final conn = getDatabaseConnection();
 
-      // Retrieve user data from the database based on the provided username and password
+
       final results = await conn.query(
         'SELECT uid, fname, lname, phone, email, address FROM user WHERE username = ? AND password = ?',
         [username, md5.convert(utf8.encode(password)).toString()],
@@ -172,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
         };
       }
 
-      return {}; // Return an empty map if no user found
+      return {};
     } catch (e) {
       print('Error during login: $e');
       return {};

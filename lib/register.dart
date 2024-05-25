@@ -201,10 +201,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             String email = emailController.text.trim();
                             String address = addressController.text.trim();
 
-                            // Hash the password using MD5
+
                             String hashedPassword = md5.convert(utf8.encode(password)).toString();
 
-                            // Store the password hash
+
                             await registerUser(username, hashedPassword, firstName, lastName, phoneNumber, email, address);
 
                             showDialog(

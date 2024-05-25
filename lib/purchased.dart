@@ -66,10 +66,10 @@ class _PurchasedPageState extends State<PurchasedPage> {
               width: 50,
               height: 50,
             )
-                : Container(); // or any placeholder widget if petimg is null
+                : Container();
             return ListTile(
               leading: petImageWidget,
-              title: Text('Item: ${purchase['name']}'), // Assuming the field name in petinfo table is 'name'
+              title: Text('Item: ${purchase['name']}'),
               subtitle: Text('Price: \$${purchase['price']}'),
             );
           },
@@ -103,7 +103,7 @@ Future<List<Map<String, dynamic>>> getPurchasesForUser(int? userId) async {
         if (value is Blob) {
           purchaseMap[key] = value;
         } else if (value is DateTime) {
-          purchaseMap[key] = value.toString(); // Convert DateTime to string
+          purchaseMap[key] = value.toString();
         } else {
           purchaseMap[key] = value;
         }

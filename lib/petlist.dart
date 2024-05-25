@@ -91,7 +91,7 @@ class _PetListState extends State<PetList> {
                   trailing: IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () {
-                      deletePet(petData['pui']); // Call delete function
+                      deletePet(petData['pui']); //delete function
                     },
                   ),
                 );

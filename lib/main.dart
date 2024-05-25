@@ -1,4 +1,3 @@
-// main.dart
 
 import 'package:flutter/material.dart';
 import 'login.dart';
@@ -9,8 +8,8 @@ import 'petreg.dart';
 import 'admin.dart';
 import 'petlist.dart';
 import 'purchased.dart';
-import 'petdetails.dart' as details; // Use alias 'details'
-import 'dbconnection.dart'; // Import dbconnection.dart to initialize the database connection
+import 'petdetails.dart' as details;
+import 'dbconnection.dart';
 
 void main() async {
   // Initialize the database connection before running the app
@@ -40,7 +39,7 @@ class MyApp extends StatelessWidget {
 
         '/petdetails': (context) => details.PetDetailsPage(petData: {}, userId: userData['uid']),
 
-        // Use 'details' alias
+
       },
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'admin.dart'; // Make sure to import your admin page
+import 'admin.dart';
 
 class SecretPage extends StatefulWidget {
   @override
@@ -16,10 +16,10 @@ class _SecretPageState extends State<SecretPage> {
         if (_input == "0000") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AdminPage()), // Replace with your admin page
+            MaterialPageRoute(builder: (context) => AdminPage()),
           );
         } else {
-          _input = ""; // Reset the input if the code is incorrect
+          _input = "";
         }
       }
     });

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
-import 'dbconnection.dart'; // Import your dbconnection.dart file
+import 'dbconnection.dart';
 
 class AdminPage extends StatefulWidget {
   @override
@@ -8,12 +8,12 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  List<Map<String, dynamic>> userList = []; // List to store user data
+  List<Map<String, dynamic>> userList = [];
 
   @override
   void initState() {
     super.initState();
-    fetchUserList(); // Fetch user list when the page initializes
+    fetchUserList();
   }
 
   Future<void> fetchUserList() async {
@@ -34,7 +34,7 @@ class _AdminPageState extends State<AdminPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Admin Page'),
-        automaticallyImplyLeading: false, // Remove the back button
+        automaticallyImplyLeading: false,
       ),
       body: ListView.builder(
         itemCount: userList.length,
@@ -53,7 +53,7 @@ class _AdminPageState extends State<AdminPage> {
         },
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 20.0, left: 20.0), // Adjust the padding as needed
+        padding: const EdgeInsets.only(bottom: 20.0, left: 20.0),
         child: FloatingActionButton.extended(
           onPressed: () {
             Navigator.pushReplacement(
@@ -63,7 +63,7 @@ class _AdminPageState extends State<AdminPage> {
           },
           label: Text(''),
           icon: Icon(Icons.logout),
-          backgroundColor: Colors.red, // Adjust the color as needed
+          backgroundColor: Colors.red,
         ),
       ),
     );
@@ -72,8 +72,8 @@ class _AdminPageState extends State<AdminPage> {
   Future<void> deleteUser(int uid) async {
     try {
       final conn = getDatabaseConnection();
-      await conn.query('DELETE FROM petinfo WHERE uid = ?', [uid]); // Delete associated pet info
-      await conn.query('DELETE FROM user WHERE uid = ?', [uid]); // Delete user
+      await conn.query('DELETE FROM petinfo WHERE uid = ?', [uid]);
+      await conn.query('DELETE FROM user WHERE uid = ?', [uid]);
       fetchUserList(); // Refresh user list after deletion
     } catch (e) {
       print('Error deleting user: $e');

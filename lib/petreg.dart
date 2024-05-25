@@ -32,7 +32,7 @@ class _PetRegistrationPageState extends State<PetRegistrationPage> {
       final Uint8List imageData = await _imageFile!.readAsBytes();
 
       try {
-        final uid = widget.userData['uid']; // Use the actual user's UID
+        final uid = widget.userData['uid'];
 
         await registerPet(
           userId: uid,

@@ -351,7 +351,7 @@ class _HomePageState extends State<HomePage> {
                         return ListTile(
                           title: Text('${petData['name']}'),
                           subtitle: Text('Type: ${petData['type']}\nBreed: ${petData['breed']}'),
-                          leading: const CircleAvatar(), // Placeholder avatar
+                          leading: const CircleAvatar(), // Placeholder avatar fo displayed pet
                           onTap: () {
                             Navigator.push(
                               context,
@@ -438,9 +438,9 @@ class PetSearchDelegate extends SearchDelegate<String> {
                   future: homePageState.getPetImage(petData['pui']),
                   builder: (context, imageSnapshot) {
                     if (imageSnapshot.connectionState == ConnectionState.waiting) {
-                      return const CircleAvatar(); // Placeholder avatar
+                      return const CircleAvatar(); // Placeholder avatar searched pet
                     } else if (imageSnapshot.hasError || imageSnapshot.data == null) {
-                      return const CircleAvatar(); // Placeholder avatar
+                      return const CircleAvatar(); // Placeholder avatar searched pet
                     } else {
                       return CircleAvatar(
                         backgroundImage: imageSnapshot.data,

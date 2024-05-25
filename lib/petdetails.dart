@@ -5,7 +5,7 @@ import 'package:meowdoption/dbconnection.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final Map<String, dynamic> petData;
-  final int userId; // New parameter to pass the user ID
+  final int userId; //parameter to pass the user ID
 
   const PetDetailsPage({Key? key, required this.petData, required this.userId}) : super(key: key);
 
@@ -21,9 +21,7 @@ class PetDetailsPage extends StatelessWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          // Implement your refresh logic here
-          // For example, you can refetch data or reload the page
-          // This is a placeholder for your refresh logic
+
           await Future.delayed(Duration(seconds: 1));
           return;
         },
@@ -44,9 +42,9 @@ class PetDetailsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: MediaQuery.of(context).size.height, //scroll function
+                    height: MediaQuery.of(context).size.height,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start, // fix the image alignment
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (petImage != null)
                           Image(image: petImage)
@@ -55,7 +53,7 @@ class PetDetailsPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start, // text alignment
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Name: ${petData['name']}',
@@ -130,7 +128,7 @@ class PetDetailsPage extends StatelessWidget {
                                       final result = await conn.query('''
                                         INSERT INTO purchased (user_id, pet_id, price)
                                         VALUES (?, ?, ?)
-                                      ''', [userId, petData['pui'], petData['price']]); // Using userId here
+                                      ''', [userId, petData['pui'], petData['price']]);
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           content: Text('Purchase Successful'),
