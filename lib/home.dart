@@ -159,7 +159,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(230, 206, 160, 1),
         appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/ab1.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
           title: const Text('Home Page'),
           leading: Builder(
             builder: (BuildContext context) {
@@ -410,7 +419,7 @@ class PetSearchDelegate extends SearchDelegate<String> {
       },
     );
   }
-
+//pet display
   @override
   Widget buildResults(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(

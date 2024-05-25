@@ -68,7 +68,7 @@ class _PetListState extends State<PetList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pet Listed of ${widget.user}'),
+        title: Text('Pet Listed'),
       ),
       body: ListView.builder(
         itemCount: pets.length,
