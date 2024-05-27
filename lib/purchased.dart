@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:meowdoption/dbconnection.dart';
@@ -42,6 +40,21 @@ class _PurchasedPageState extends State<PurchasedPage> {
     }
   }
 
+  Future<Map<String, dynamic>> fetchUserInfo(int userId) async {
+    try {
+      final conn = await getDatabaseConnection();
+      final result = await conn.query('SELECT fname, lname, address, phone FROM user WHERE uid = ?', [userId]);
+      if (result.isNotEmpty) {
+        return result.first.fields;
+      } else {
+        return {};
+      }
+    } catch (e) {
+      print('Error fetching user info: $e');
+      return {};
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +93,30 @@ class _PurchasedPageState extends State<PurchasedPage> {
               return ListTile(
                 leading: petImageWidget,
                 title: Text('Name: ${purchase['name']}'),
-                subtitle: Text('Price: \$${purchase['price']}'),
+                subtitle: FutureBuilder<Map<String, dynamic>>(
+                  future: fetchUserInfo(purchase['uid']),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      final userData = snapshot.data ?? {};
+                      final name = '${userData['fname']} ${userData['lname']}';
+                      final address = userData['address'];
+                      final phone = userData['phone'];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Price: \$${purchase['price']}'),
+                          Text('Owner Name: $name'),
+                          Text('Address: $address'),
+                          Text('Phone: $phone'),
+                        ],
+                      );
+                    }
+                  },
+                ),
               );
             },
           ),
